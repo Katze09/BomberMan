@@ -7,6 +7,7 @@ package Objects;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -26,6 +27,7 @@ public abstract class Object implements GameMethods
     protected int indexSprites;
     protected boolean dead;
     protected int speed;
+    protected Vector3 vector3Position;
 
     public Object()
     {
@@ -44,6 +46,7 @@ public abstract class Object implements GameMethods
         hitBoxMultiplication = 0.1f;
         hitBox = new Rectangle(X + (WIDTH * hitBoxMultiplication), Y + (HEIGHT * hitBoxMultiplication),
                 (X + WIDTH) - (WIDTH * hitBoxMultiplication), (Y + HEIGHT) - (HEIGHT * hitBoxMultiplication));
+        vector3Position = new Vector3(X, Y, 0);
     }
 
     public Array<Texture> getSprites()
@@ -84,6 +87,7 @@ public abstract class Object implements GameMethods
     public void setX(float X)
     {
         this.X = X;
+        vector3Position.x = X;
         hitBox.setX(X + (WIDTH * hitBoxMultiplication));
     }
 
@@ -100,9 +104,15 @@ public abstract class Object implements GameMethods
     public void setY(float Y)
     {
         this.Y = Y;
+        vector3Position.y = Y;
         hitBox.setX(Y + (HEIGHT * hitBoxMultiplication));
     }
 
+    public Vector3 getVector3Position()
+    {
+        return vector3Position;
+    }
+    
     public int getWIDTH()
     {
         return WIDTH;

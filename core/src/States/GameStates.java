@@ -8,7 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import Objects.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -20,8 +19,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class GameStates implements GameMethods
 {
 
-    private final int screenWidth = 1500;
-    private final int screenHeight = 1100;
+    private final int screenWidth = Gdx.graphics.getWidth();
+    private final int screenHeight = Gdx.graphics.getHeight();
 
     public OrthographicCamera camera;
     private Player player;
@@ -30,13 +29,11 @@ public class GameStates implements GameMethods
     public GameStates()
     {
         camera = new OrthographicCamera();
-        camera.setToOrtho(true, screenWidth, screenHeight);
-        //soldiers = new Array<>();
-        //soldiers.add(new Soldier(new Texture("badlogic.jpg"), 100, 100));
+        camera.setToOrtho(false, screenWidth, screenHeight);
+        camera.update();
         Array<Texture> textures = new Array<Texture>();
         textures.add(new Texture("Player1.png"));
-        //textures.get(0).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        player = new Player(textures, 100, 100);
+        player = new Player(textures, 400, 400);
     }
 
     public void keyBoardDown(int keycode)
@@ -62,7 +59,6 @@ public class GameStates implements GameMethods
     public void update(float deltaTime)
     {
         player.update(deltaTime);
-        camera.update();
         /*camera.update();
         for (Soldier soldier : soldiers)
             soldier.update(deltaTime);*/
