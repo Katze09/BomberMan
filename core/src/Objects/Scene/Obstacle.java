@@ -7,6 +7,7 @@ package Objects.Scene;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import Objects.Object;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  *
@@ -17,14 +18,8 @@ public abstract class Obstacle extends Object
 
     public Obstacle(Texture sprite, float X, float Y)
     {
-        super();
-        Array<Texture> spriteA = new Array<Texture>();
-        spriteA.add(sprite);
+        super(new Array<>(new Texture[]{sprite}), X, Y);
         hitBoxMultiplication = 1f;
-        setSprites(spriteA);
-        WIDTH = sprite.getWidth();
-        HEIGHT = sprite.getHeight();
-        setX(X);
-        setY(Y);
+        hitBox = new Rectangle(X, Y, WIDTH, HEIGHT);
     }
 }

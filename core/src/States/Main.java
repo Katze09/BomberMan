@@ -26,7 +26,7 @@ public class Main extends ApplicationAdapter implements InputProcessor
     public void render()
     {
         float deltaTime = Gdx.graphics.getDeltaTime();
-        ScreenUtils.clear(1, 0, 0, 1);
+        ScreenUtils.clear(165, 165, 165, 1);
         batch.begin();
         gameStates.update(deltaTime);
         gameStates.draw(batch);

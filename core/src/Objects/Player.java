@@ -4,9 +4,11 @@
  */
 package Objects;
 
+import States.GameStates;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.input.RemoteSender;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -29,13 +31,22 @@ public class Player extends Object
     private boolean rightNext;
     private boolean leftNext;
     private float moveTo;
+    public float previouslyX;
+    public float previouslyY;
 
     public Player(Array<Texture> sprites, float X, float Y)
     {
         super(sprites, X, Y);
-        speed = 500;
+        speed = 800;
         up = down = right = left = false;
         upKleft = downKleft = rightKleft = leftKleft = true;
+        float X1HitBox = X + (WIDTH * hitBoxMultiplication);
+        float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
+        float Y1HitBox = (Y + 25) - (HEIGHT * hitBoxMultiplication);
+        float Y2HitBox = HEIGHT - 2 * (HEIGHT * hitBoxMultiplication); // Corregido
+        hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
+        previouslyX = X;
+        previouslyY = Y;
     }
 
     public void keyBoardDown(int keycode)
@@ -48,27 +59,39 @@ public class Player extends Object
             switch (keycode)
             {
                 case Input.Keys.W:
-                    up = true;
-                    moveTo = Y + 100;
-                    upKleft = true;
+                    if (GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+                    {
+                        up = true;
+                        moveTo = Y + 100;
+                        upKleft = true;
+                    }
                     break;
                 case Input.Keys.S:
-                    down = true;
-                    moveTo = Y - 100;
-                    downKleft = true;
+                    if (GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                    {
+                        down = true;
+                        moveTo = Y - 100;
+                        downKleft = true;
+                    }
                     break;
                 case Input.Keys.D:
-                    right = true;
-                    moveTo = X + 100;
-                    rightKleft = true;
+                    if (GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                    {
+                        right = true;
+                        moveTo = X + 100;
+                        rightKleft = true;
+                    }
                     break;
                 case Input.Keys.A:
-                    left = true;
-                    moveTo = X - 100;
-                    leftKleft = true;
+                    if (GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                    {
+                        left = true;
+                        moveTo = X - 100;
+                        leftKleft = true;
+                    }
                     break;
             }
-        }else
+        } else
         {
             upNext = downNext = rightNext = leftNext = false;
             switch (keycode)
@@ -112,115 +135,161 @@ public class Player extends Object
     public void update(float deltaTime)
     {
         if (up)
-            if (Y < moveTo)
-                setY(Y + (speed * deltaTime));
+            upEvent(deltaTime);
+        if (down)
+            downEvent(deltaTime);
+        if (right)
+            rightEvent(deltaTime);
+        if (left)
+            leftEvent(deltaTime);
+    }
+
+    private void upEvent(float deltaTime)
+    {
+        if (Y < moveTo)
+            setY(Y + (speed * deltaTime));
+        else
+        {
+            setY(moveTo);
+            if (upKleft && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+                moveTo = Y + 100;
             else
             {
                 if (upKleft)
-                    moveTo = Y + 100;
-                else
+                    upKleft = false;
+                moveTo = 0;
+                if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
                 {
-                    setY(moveTo);
-                    moveTo = 0;
-                    if(downNext)
-                    {
-                        down = true;
-                        moveTo = Y - 100;
-                    }else if(rightNext)
-                    {
-                        right = true;
-                        moveTo = X + 100;
-                    }else if(leftNext)
-                    {
-                        left = true;
-                        moveTo = X - 100;
-                    }
+                    down = true;
+                    downKleft = true;
+                    moveTo = Y - 100;
+                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                {
+                    right = true;
+                    rightKleft = true;
+                    moveTo = X + 100;
+                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                {
+                    left = true;
+                    leftKleft = true;
+                    moveTo = X - 100;
                 }
-                up = upKleft;
             }
-        if (down)
-            if (Y > moveTo)
-                setY(Y - (speed * deltaTime));
+            up = upKleft;
+        }
+    }
+
+    private void downEvent(float deltaTime)
+    {
+        if (Y > moveTo)
+            setY(Y - (speed * deltaTime));
+        else
+        {
+            setY(moveTo);
+            if (downKleft && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                moveTo = Y - 100;
             else
             {
                 if (downKleft)
-                    moveTo = Y - 100;
-                else
+                    downKleft = false;
+                moveTo = 0;
+                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
                 {
-                    setY(moveTo);
-                    moveTo = 0;
-                    if(upNext)
-                    {
-                        up = true;
-                        moveTo = Y + 100;
-                    }else if(rightNext)
-                    {
-                        right = true;
-                        moveTo = X + 100;
-                    }else if(leftNext)
-                    {
-                        left = true;
-                        moveTo = X - 100;
-                    }
+                    up = true;
+                    upKleft = true;
+                    moveTo = Y + 100;
+                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                {
+                    right = true;
+                    rightKleft = true;
+                    moveTo = X + 100;
+                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                {
+                    left = true;
+                    leftKleft = true;
+                    moveTo = X - 100;
                 }
-                down = downKleft;
             }
-        if (right)
-            if (X < moveTo)
-                setX(X + (speed * deltaTime));
+            down = downKleft;
+        }
+    }
+
+    private void rightEvent(float deltaTime)
+    {
+        if (X < moveTo)
+            setX(X + (speed * deltaTime));
+        else
+        {
+            setX(moveTo);
+            if (rightKleft && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                moveTo = X + 100;
             else
             {
                 if (rightKleft)
-                    moveTo = X + 100;
-                else
+                    rightKleft = false;
+                moveTo = 0;
+                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
                 {
-                    setX(moveTo);
-                    moveTo = 0;
-                    if(upNext)
-                    {
-                        up = true;
-                        moveTo = Y + 100;
-                    }else if(downNext)
-                    {
-                        down = true;
-                        moveTo = Y - 100;
-                    }else if(leftNext)
-                    {
-                        left = true;
-                        moveTo = X - 100;
-                    }
+                    up = true;
+                    upKleft = true;
+                    moveTo = Y + 100;
+                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                {
+                    down = true;
+                    downKleft = true;
+                    moveTo = Y - 100;
+                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                {
+                    left = true;
+                    leftKleft = true;
+                    moveTo = X - 100;
                 }
-                right = rightKleft;
             }
-        if (left)
-            if (X > moveTo)
-                setX(X - (speed * deltaTime));
+            right = rightKleft;
+        }
+    }
+
+    private void leftEvent(float deltaTime)
+    {
+        if (X > moveTo)
+            setX(X - (speed * deltaTime));
+        else
+        {
+            setX(moveTo);
+            if (leftKleft && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                moveTo = X - 100;
             else
             {
                 if (leftKleft)
-                    moveTo = X - 100;
-                else
+                    leftKleft = false;
+                moveTo = 0;
+                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
                 {
-                    setX(moveTo);
-                    moveTo = 0;
-                    if(upNext)
-                    {
-                        up = true;
-                        moveTo = Y + 100;
-                    }else if(downNext)
-                    {
-                        down = true;
-                        moveTo = Y - 100;
-                    }else if(rightNext)
-                    {
-                        right = true;
-                        moveTo = X + 100;
-                    }
+                    up = true;
+                    upKleft = true;
+                    moveTo = Y + 100;
+                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                {
+                    down = true;
+                    downKleft = true;
+                    moveTo = Y - 100;
+                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                {
+                    right = true;
+                    rightKleft = true;
+                    moveTo = X + 100;
                 }
-                left = leftKleft;
             }
-        System.out.println("X " + X);
-        System.out.println("Y " + Y);
+            left = leftKleft;
+        }
+    }
+
+    @Override
+    public void setY(float Y)
+    {
+        this.Y = Y;
+        vector3Position.y = Y;
+        hitBox.setY((Y + 25) - (HEIGHT * hitBoxMultiplication));
     }
 
 }

@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import Objects.*;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import Objects.Scene.*;
 
 /**
  *
@@ -24,16 +24,17 @@ public class GameStates implements GameMethods
 
     public OrthographicCamera camera;
     private Player player;
-    //private Array<Soldier> soldiers;
+    public static Map map;
 
     public GameStates()
     {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screenWidth, screenHeight);
         camera.update();
+        map = new Map();
         Array<Texture> textures = new Array<Texture>();
         textures.add(new Texture("Player1.png"));
-        player = new Player(textures, 400, 400);
+        player = new Player(textures, 100, 100);
     }
 
     public void keyBoardDown(int keycode)
@@ -49,28 +50,20 @@ public class GameStates implements GameMethods
     @Override
     public void draw(SpriteBatch batch)
     {
+        map.draw(batch);
         player.draw(batch);
-        /*for (Soldier soldier : soldiers)
-            soldier.draw(batch);
-        batch.setProjectionMatrix(camera.combined);*/
     }
 
     @Override
     public void update(float deltaTime)
     {
         player.update(deltaTime);
-        /*camera.update();
-        for (Soldier soldier : soldiers)
-            soldier.update(deltaTime);*/
     }
 
     @Override
     public void dispose()
     {
         player.dispose();
-        /*for (Soldier soldier : soldiers)
-            soldier.dispose();
-        soldiers.clear();*/
     }
 
 }

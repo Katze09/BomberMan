@@ -32,7 +32,7 @@ public abstract class Object implements GameMethods
     public Object()
     {
     }
-    
+
     public Object(Array<Texture> sprites, float X, float Y)
     {
         this.sprites = sprites;
@@ -44,9 +44,18 @@ public abstract class Object implements GameMethods
         speed = 100;
         dead = false;
         hitBoxMultiplication = 0.1f;
-        hitBox = new Rectangle(X + (WIDTH * hitBoxMultiplication), Y + (HEIGHT * hitBoxMultiplication),
-                (X + WIDTH) - (WIDTH * hitBoxMultiplication), (Y + HEIGHT) - (HEIGHT * hitBoxMultiplication));
+        float X1HitBox = X + (WIDTH * hitBoxMultiplication);
+        float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
+        float Y1HitBox = Y - (HEIGHT * hitBoxMultiplication);
+        float Y2HitBox = HEIGHT - 2 * (HEIGHT * hitBoxMultiplication); // Corregido
+        hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
+        //System.out.println(hitBo.xtoString());
         vector3Position = new Vector3(X, Y, 0);
+    }
+
+    public boolean checkCollsision(Object object)
+    {
+        return (hitBox.overlaps(object.getHitBox()));
     }
 
     public Array<Texture> getSprites()
@@ -58,17 +67,17 @@ public abstract class Object implements GameMethods
     {
         this.sprites = sprites;
     }
-    
+
     public Texture getSprite(int index)
     {
         return sprites.get(index);
     }
-    
+
     public void setSprite(Texture sprite, int index)
     {
         sprites.set(index, sprite);
     }
-    
+
     public void addSprite(Texture sprite)
     {
         sprites.add(sprite);
@@ -78,7 +87,7 @@ public abstract class Object implements GameMethods
     {
         return X;
     }
-    
+
     public float getX2()
     {
         return X + WIDTH;
@@ -95,7 +104,7 @@ public abstract class Object implements GameMethods
     {
         return Y;
     }
-    
+
     public float getY2()
     {
         return Y + HEIGHT;
@@ -105,14 +114,14 @@ public abstract class Object implements GameMethods
     {
         this.Y = Y;
         vector3Position.y = Y;
-        hitBox.setX(Y + (HEIGHT * hitBoxMultiplication));
+        hitBox.setY(Y + (HEIGHT * hitBoxMultiplication));
     }
 
     public Vector3 getVector3Position()
     {
         return vector3Position;
     }
-    
+
     public int getWIDTH()
     {
         return WIDTH;
@@ -142,7 +151,12 @@ public abstract class Object implements GameMethods
     {
         this.speed = speed;
     }
-    
+
+    public Rectangle getHitBox()
+    {
+        return hitBox;
+    }
+
     @Override
     public void draw(SpriteBatch batch)
     {
