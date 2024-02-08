@@ -7,6 +7,7 @@ package States;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import java.util.Random;
 
 /**
  *
@@ -40,5 +41,10 @@ public class Loader
     public static Texture LoadTexture(String fileName)
     {
         return new Texture(fileName + ".png");
+    }
+    
+    public static int getRandomNum(int i, int j)
+    {
+        return new Random().nextInt(i, j);
     }
 }

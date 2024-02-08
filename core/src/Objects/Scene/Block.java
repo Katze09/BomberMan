@@ -13,15 +13,30 @@ import com.badlogic.gdx.graphics.Texture;
 public class Block extends Obstacle
 {
 
+    private final int indexX;
+    private final int indexY;
+
     public Block(Texture sprite, float X, float Y)
     {
         super(sprite, X, Y);
+        this.indexX = (int) (X * 0.01);
+        this.indexY = (int) (Y * 0.01);
     }
 
     @Override
     public void update(float deltaTime)
     {
-        
+
     }
-    
+
+    public int getIndexX()
+    {
+        return indexX;
+    }
+
+    public int getIndexY()
+    {
+        return indexY;
+    }
+
 }

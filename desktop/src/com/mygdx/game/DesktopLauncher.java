@@ -5,13 +5,16 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import States.Main;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
-public class DesktopLauncher {
-	public static void main (String[] arg) {
-		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
-                config.setWindowedMode(1500, 1100);
-                //config.setWindowSizeLimits(1500, 1100, 1500, 1100);
-		config.setTitle("Bomberman");
-		new Lwjgl3Application(new Main(), config);
-	}
+public class DesktopLauncher
+{
+
+    public static void main(String[] arg)
+    {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setForegroundFPS(60);
+        config.setWindowedMode(1500, 1100);
+        //config.setWindowSizeLimits(1500, 1100, 1500, 1100);
+        config.setTitle("Bomberman");
+        new Lwjgl3Application(new Main(), config);
+    }
 }

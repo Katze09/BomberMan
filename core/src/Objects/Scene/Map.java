@@ -8,6 +8,7 @@ import Objects.GameMethods;
 import States.Loader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 
 /**
  *
@@ -17,7 +18,8 @@ public class Map implements GameMethods
 {
 
     private Block BlockUnbreakable[];
-    private char[][] map;
+    public Array<Block> BlockBreakable;
+    public char[][] map;
 
     public Map()
     {
@@ -26,15 +28,30 @@ public class Map implements GameMethods
             for (int j = 0; j < 15; j++)
                 map[i][j] = '*';
         setUnbreakableBlocks();
-        
-
+        map[1][1] = map[1][2] = map[2][1] = map[9][1] = map[9][2] = map[8][1] = map[1][12] = map[1][13] = map[2][13] = map[9][12] = map[9][13] = map[8][13] = '!'; 
+        setBreakableBlocks();
+        for (int i = 0; i < 11; i++)
+        {
+            for (int j = 0; j < 15; j++)
+            {
+                System.out.print(map[i][j]);
+            }
+            System.out.println("");
+        }
     }
-    
-    public boolean canMoveTo(int x, int y)
+
+    public int canMoveTo(int x, int y)
     {
         x = (int) (x * 0.01f);
         y = (int) (y * 0.01f);
-        return (map[y][x] != '#');
+        switch(map[y][x])
+        {
+            case '#':
+                return 0;
+            case '+':
+                return 1;
+        }
+        return -1;
     }
 
     @Override
@@ -42,6 +59,8 @@ public class Map implements GameMethods
     {
         for (Block BlockUnbreakable : this.BlockUnbreakable)
             BlockUnbreakable.draw(batch);
+        for (int i = 0; i < BlockBreakable.size; i++)
+            BlockBreakable.get(i).draw(batch);
     }
 
     @Override
@@ -52,6 +71,26 @@ public class Map implements GameMethods
     @Override
     public void dispose()
     {
+    }
+
+    private void setBreakableBlocks()
+    {
+        BlockBreakable = new Array<>();
+        Texture blockTexture = Loader.LoadTexture("BlockBreakable");
+        for (int i = 0; i < Loader.getRandomNum(60, 80); i++)
+        {
+            int x = Loader.getRandomNum(1, 14);
+            int y = Loader.getRandomNum(1, 10);
+            while (map[y][x] == '#' || map[y][x] == '+' || map[y][x] == '!')
+            {
+                x = Loader.getRandomNum(1, 14);
+                y = Loader.getRandomNum(1, 10);
+            }
+            float X = x * 100;
+            float Y = y * 100;
+            BlockBreakable.add(new Block(blockTexture, X, Y));
+            map[y][x] = '+';
+        }
     }
 
     private void setUnbreakableBlocks()

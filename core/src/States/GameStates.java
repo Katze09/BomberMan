@@ -75,7 +75,35 @@ public class GameStates implements GameMethods
     {
         player.update(deltaTime);
         for (int i = 0; i < bombs.size; i++)
+        {
             bombs.get(i).update(deltaTime);
+            checkCollisonOtherBombs(i);
+            checkCollisionBlockBreakable(i);
+            if (bombs.get(i).isDead())
+                bombs.removeIndex(i);
+        }
+    }
+
+    private void checkCollisonOtherBombs(int i)
+    {
+        if (bombs.get(i).isExplode)
+            for (int j = 0; j < bombs.size; j++)
+                if (i != j)
+                    for (int k = 0; k < bombs.get(i).explosion.size; k++)
+                        if (bombs.get(i).explosion.get(k).checkCollsision(bombs.get(j)))
+                            if (!bombs.get(j).isExplode)
+                                bombs.get(j).delayExplode = 0;
+    }
+
+    private void checkCollisionBlockBreakable(int i)
+    {
+        for (int j = 0; j < bombs.get(i).explosion.size; j++)
+            for (int k = 0; k < map.BlockBreakable.size; k++)
+                if (bombs.get(i).explosion.get(j).checkCollsision(map.BlockBreakable.get(k)))
+                {
+                    map.map[map.BlockBreakable.get(k).getIndexY()][map.BlockBreakable.get(k).getIndexX()] = '*';
+                    map.BlockBreakable.removeIndex(k);
+                }
     }
 
     @Override

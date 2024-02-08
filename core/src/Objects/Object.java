@@ -46,7 +46,7 @@ public abstract class Object implements GameMethods
         hitBoxMultiplication = 0.1f;
         float X1HitBox = X + (WIDTH * hitBoxMultiplication);
         float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
-        float Y1HitBox = Y - (HEIGHT * hitBoxMultiplication);
+        float Y1HitBox = Y + (HEIGHT * hitBoxMultiplication);
         float Y2HitBox = HEIGHT - 2 * (HEIGHT * hitBoxMultiplication); // Corregido
         hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
         //System.out.println(hitBo.xtoString());

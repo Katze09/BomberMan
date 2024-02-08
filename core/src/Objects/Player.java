@@ -59,7 +59,7 @@ public class Player extends Object
             switch (keycode)
             {
                 case Input.Keys.W:
-                    if (GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+                    if (GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                     {
                         up = true;
                         moveTo = Y + 100;
@@ -67,7 +67,7 @@ public class Player extends Object
                     }
                     break;
                 case Input.Keys.S:
-                    if (GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                    if (GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                     {
                         down = true;
                         moveTo = Y - 100;
@@ -75,7 +75,7 @@ public class Player extends Object
                     }
                     break;
                 case Input.Keys.D:
-                    if (GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                    if (GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                     {
                         right = true;
                         moveTo = X + 100;
@@ -83,7 +83,7 @@ public class Player extends Object
                     }
                     break;
                 case Input.Keys.A:
-                    if (GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                    if (GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                     {
                         left = true;
                         moveTo = X - 100;
@@ -151,24 +151,24 @@ public class Player extends Object
         else
         {
             setY(moveTo);
-            if (upKleft && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+            if (upKleft && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 moveTo = Y + 100;
             else
             {
                 if (upKleft)
                     upKleft = false;
                 moveTo = 0;
-                if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
                     down = true;
                     downKleft = true;
                     moveTo = Y - 100;
-                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
                     right = true;
                     rightKleft = true;
                     moveTo = X + 100;
-                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
                     left = true;
                     leftKleft = true;
@@ -186,24 +186,24 @@ public class Player extends Object
         else
         {
             setY(moveTo);
-            if (downKleft && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+            if (downKleft && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 moveTo = Y - 100;
             else
             {
                 if (downKleft)
                     downKleft = false;
                 moveTo = 0;
-                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
                     up = true;
                     upKleft = true;
                     moveTo = Y + 100;
-                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
                     right = true;
                     rightKleft = true;
                     moveTo = X + 100;
-                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
                     left = true;
                     leftKleft = true;
@@ -221,24 +221,24 @@ public class Player extends Object
         else
         {
             setX(moveTo);
-            if (rightKleft && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+            if (rightKleft && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 moveTo = X + 100;
             else
             {
                 if (rightKleft)
                     rightKleft = false;
                 moveTo = 0;
-                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
                     up = true;
                     upKleft = true;
                     moveTo = Y + 100;
-                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
                     down = true;
                     downKleft = true;
                     moveTo = Y - 100;
-                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
                     left = true;
                     leftKleft = true;
@@ -256,24 +256,24 @@ public class Player extends Object
         else
         {
             setX(moveTo);
-            if (leftKleft && GameStates.map.canMoveTo((int) (X - 100), (int) Y))
+            if (leftKleft && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 moveTo = X - 100;
             else
             {
                 if (leftKleft)
                     leftKleft = false;
                 moveTo = 0;
-                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)))
+                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
                     up = true;
                     upKleft = true;
                     moveTo = Y + 100;
-                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)))
+                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
                     down = true;
                     downKleft = true;
                     moveTo = Y - 100;
-                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y))
+                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
                     right = true;
                     rightKleft = true;

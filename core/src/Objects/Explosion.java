@@ -18,7 +18,7 @@ public class Explosion extends Object
 {
 
     private float animationExplosion;
-    private int rotate;
+    private final int rotate;
 
     public Explosion(Array<Texture> sprites, float X, float Y, int rotate)
     {
@@ -47,6 +47,8 @@ public class Explosion extends Object
                 if (indexSprites == 3)
                     animationExplosion = 0.5f;
             }
+        else
+            dead = true;
     }
 
     @Override

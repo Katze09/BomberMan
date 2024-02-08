@@ -19,7 +19,7 @@ public abstract class Obstacle extends Object
     public Obstacle(Texture sprite, float X, float Y)
     {
         super(new Array<>(new Texture[]{sprite}), X, Y);
-        hitBoxMultiplication = 1f;
+        //hitBoxMultiplication = 0.8f;
         hitBox = new Rectangle(X, Y, WIDTH, HEIGHT);
     }
 }
