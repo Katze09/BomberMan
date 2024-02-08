@@ -5,6 +5,7 @@
 package Objects.Scene;
 
 import Objects.GameMethods;
+import States.Loader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -58,7 +59,7 @@ public class Map implements GameMethods
         BlockUnbreakable = new Block[72];
         int mapX = 0;
         int mapY = 0;
-        Texture blockTexture = new Texture("BlockUnbreakable.png");
+        Texture blockTexture = Loader.LoadTexture("BlockUnbreakable");
         int cont = 0;
         for (int j = 0; j < 2800; j += 1400)
         {

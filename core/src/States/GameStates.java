@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import Objects.*;
 import Objects.Scene.*;
+import com.badlogic.gdx.Input;
 
 /**
  *
@@ -24,6 +25,8 @@ public class GameStates implements GameMethods
 
     public OrthographicCamera camera;
     private Player player;
+    private Array<Bomb> bombs;
+    private Array<Texture> spritesBombs;
     public static Map map;
 
     public GameStates()
@@ -32,14 +35,25 @@ public class GameStates implements GameMethods
         camera.setToOrtho(false, screenWidth, screenHeight);
         camera.update();
         map = new Map();
-        Array<Texture> textures = new Array<Texture>();
-        textures.add(new Texture("Player1.png"));
-        player = new Player(textures, 100, 100);
+        bombs = new Array<>();
+        String[] fileNames = new String[10];
+        fileNames[0] = "Bomb";
+        spritesBombs = Loader.LoadArraysprites(fileNames, 1);
+        fileNames[0] = "Player";
+        player = new Player(Loader.LoadArraysprites(fileNames, 1), 100, 100);
     }
 
     public void keyBoardDown(int keycode)
     {
         player.keyBoardDown(keycode);
+        if (Input.Keys.E == keycode)
+            if (player.moveTo > 0)
+                if (player.up || player.down)
+                    bombs.add(new Bomb(spritesBombs, player.getX(), player.moveTo));
+                else
+                    bombs.add(new Bomb(spritesBombs, player.moveTo, player.getY()));
+            else
+                bombs.add(new Bomb(spritesBombs, player.getX(), player.getY()));
     }
 
     public void keyBoardUp(int keycode)
@@ -51,6 +65,8 @@ public class GameStates implements GameMethods
     public void draw(SpriteBatch batch)
     {
         map.draw(batch);
+        for (int i = 0; i < bombs.size; i++)
+            bombs.get(i).draw(batch);
         player.draw(batch);
     }
 
@@ -58,12 +74,14 @@ public class GameStates implements GameMethods
     public void update(float deltaTime)
     {
         player.update(deltaTime);
+        for (int i = 0; i < bombs.size; i++)
+            bombs.get(i).update(deltaTime);
     }
 
     @Override
     public void dispose()
     {
-        player.dispose();
+        //player.dispose();
     }
 
 }

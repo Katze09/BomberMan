@@ -18,10 +18,10 @@ import com.badlogic.gdx.utils.Array;
 public class Player extends Object
 {
 
-    private boolean up;
-    private boolean down;
-    private boolean right;
-    private boolean left;
+    public boolean up;
+    public boolean down;
+    public boolean right;
+    public boolean left;
     private boolean upKleft;
     private boolean downKleft;
     private boolean rightKleft;
@@ -30,14 +30,14 @@ public class Player extends Object
     private boolean downNext;
     private boolean rightNext;
     private boolean leftNext;
-    private float moveTo;
+    public float moveTo;
     public float previouslyX;
     public float previouslyY;
 
     public Player(Array<Texture> sprites, float X, float Y)
     {
         super(sprites, X, Y);
-        speed = 800;
+        speed = 500;
         up = down = right = left = false;
         upKleft = downKleft = rightKleft = leftKleft = true;
         float X1HitBox = X + (WIDTH * hitBoxMultiplication);
