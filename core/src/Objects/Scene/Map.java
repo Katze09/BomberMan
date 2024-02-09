@@ -28,14 +28,12 @@ public class Map implements GameMethods
             for (int j = 0; j < 15; j++)
                 map[i][j] = '*';
         setUnbreakableBlocks();
-        map[1][1] = map[1][2] = map[2][1] = map[9][1] = map[9][2] = map[8][1] = map[1][12] = map[1][13] = map[2][13] = map[9][12] = map[9][13] = map[8][13] = '!'; 
+        map[1][1] = map[1][2] = map[2][1] = map[9][1] = map[9][2] = map[8][1] = map[1][12] = map[1][13] = map[2][13] = map[9][12] = map[9][13] = map[8][13] = '!';
         setBreakableBlocks();
-        for (int i = 0; i < 11; i++)
+        for (int i = 10; i >= 0; i--)
         {
             for (int j = 0; j < 15; j++)
-            {
                 System.out.print(map[i][j]);
-            }
             System.out.println("");
         }
     }
@@ -44,7 +42,7 @@ public class Map implements GameMethods
     {
         x = (int) (x * 0.01f);
         y = (int) (y * 0.01f);
-        switch(map[y][x])
+        switch (map[y][x])
         {
             case '#':
                 return 0;
@@ -77,18 +75,49 @@ public class Map implements GameMethods
     {
         BlockBreakable = new Array<>();
         Texture blockTexture = Loader.LoadTexture("BlockBreakable");
-        for (int i = 0; i < Loader.getRandomNum(60, 80); i++)
+        int numBlocks = Loader.getRandomNum(60, 80);
+        int door = Loader.getRandomNum(0, numBlocks);
+        int numPowerUps = Loader.getRandomNum(5, 20);
+        int[] powerUps = new int[numPowerUps];
+        for (int i = 0; i < numPowerUps; i++)
         {
-            int x = Loader.getRandomNum(1, 14);
-            int y = Loader.getRandomNum(1, 10);
+            boolean isRepited = false;
+            powerUps[i] = Loader.getRandomNum(0, numBlocks);
+            for (int j = 0; j < i; j++)
+                if (powerUps[i] == powerUps[j])
+                {
+                    isRepited = true;
+                    break;
+                }
+            if (powerUps[i] == door || isRepited)
+                i--;
+        }
+        for (int i = 0; i < numBlocks; i++)
+        {
+            int x = Loader.getRandomNum(1, 15);
+            int y = Loader.getRandomNum(1, 11);
             while (map[y][x] == '#' || map[y][x] == '+' || map[y][x] == '!')
             {
-                x = Loader.getRandomNum(1, 14);
-                y = Loader.getRandomNum(1, 10);
+                x = Loader.getRandomNum(1, 15);
+                y = Loader.getRandomNum(1, 11);
             }
             float X = x * 100;
             float Y = y * 100;
-            BlockBreakable.add(new Block(blockTexture, X, Y));
+            boolean havePowerUp = false;
+            if (i == door) 
+            {
+                BlockBreakable.add(new Block(blockTexture, X, Y, 0));
+                havePowerUp = true;
+            } else
+                for (int j = 0; j < powerUps.length; j++)
+                    if (powerUps[j] == i)
+                    {
+                        BlockBreakable.add(new Block(blockTexture, X, Y, Loader.getRandomNum(1, 5)));
+                        havePowerUp = true;
+                        break;
+                    }
+            if (!havePowerUp)
+                BlockBreakable.add(new Block(blockTexture, X, Y));
             map[y][x] = '+';
         }
     }

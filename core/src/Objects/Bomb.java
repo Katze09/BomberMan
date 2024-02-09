@@ -77,7 +77,7 @@ public class Bomb extends Object
                         explosion.add(new Explosion(explosionSpriteFinal, X, (Y + 200), 90));
                     if (directionExplo[3] && GameStates.map.canMoveTo((int) X, (int) (Y - 200)) != 0)
                         explosion.add(new Explosion(explosionSpriteFinal, X, (Y - 200), -90));
-                    delayExplode = 0.01f;
+                    delayExplode = 0.5f;
                     break;
                 default:
                     dead = true;

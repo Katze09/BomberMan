@@ -33,11 +33,13 @@ public class Player extends Object
     public float moveTo;
     public float previouslyX;
     public float previouslyY;
+    private int numBombs;
 
     public Player(Array<Texture> sprites, float X, float Y)
     {
         super(sprites, X, Y);
         speed = 500;
+        numBombs = 3;
         up = down = right = left = false;
         upKleft = downKleft = rightKleft = leftKleft = true;
         float X1HitBox = X + (WIDTH * hitBoxMultiplication);
@@ -48,7 +50,27 @@ public class Player extends Object
         previouslyX = X;
         previouslyY = Y;
     }
+    
+    public int getNumBombs()
+    {
+        return numBombs;
+    }
+    
+    public void reduceNumBombs()
+    {
+        numBombs--;
+    }
 
+    public void increaseNumBombs()
+    {
+        numBombs++;
+    }
+    
+    public boolean canPutBomb()
+    {
+        return numBombs > 0;
+    }
+    
     public void keyBoardDown(int keycode)
     {
         if (moveTo <= 0)

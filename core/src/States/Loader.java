@@ -42,9 +42,9 @@ public class Loader
     {
         return new Texture(fileName + ".png");
     }
-    
+
     public static int getRandomNum(int i, int j)
     {
-        return new Random().nextInt(i, j);
+        return new Random().nextInt(i, (j - 1));
     }
 }

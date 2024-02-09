@@ -169,6 +169,7 @@ public abstract class Object implements GameMethods
     @Override
     public void dispose()
     {
-        sprites.get(indexSprites).dispose();
+        for (int i = 0; i < sprites.size; i++)
+            sprites.get(i).dispose();
     }
 }

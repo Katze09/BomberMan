@@ -46,7 +46,8 @@ public class GameStates implements GameMethods
     public void keyBoardDown(int keycode)
     {
         player.keyBoardDown(keycode);
-        if (Input.Keys.E == keycode)
+        if (Input.Keys.E == keycode && player.canPutBomb())
+        {
             if (player.moveTo > 0)
                 if (player.up || player.down)
                     bombs.add(new Bomb(spritesBombs, player.getX(), player.moveTo));
@@ -54,6 +55,8 @@ public class GameStates implements GameMethods
                     bombs.add(new Bomb(spritesBombs, player.moveTo, player.getY()));
             else
                 bombs.add(new Bomb(spritesBombs, player.getX(), player.getY()));
+            player.reduceNumBombs();
+        }
     }
 
     public void keyBoardUp(int keycode)
@@ -67,49 +70,70 @@ public class GameStates implements GameMethods
         map.draw(batch);
         for (int i = 0; i < bombs.size; i++)
             bombs.get(i).draw(batch);
-        player.draw(batch);
+        if (!player.isDead())
+            player.draw(batch);
     }
 
     @Override
     public void update(float deltaTime)
     {
-        player.update(deltaTime);
+        if (!player.isDead())
+            player.update(deltaTime);
+
         for (int i = 0; i < bombs.size; i++)
         {
-            bombs.get(i).update(deltaTime);
-            checkCollisonOtherBombs(i);
-            checkCollisionBlockBreakable(i);
-            if (bombs.get(i).isDead())
+            Bomb bomb = bombs.get(i);
+            bomb.update(deltaTime);
+            checkCollisionsWithOtherBombs(i);
+            checkCollisionWithBlockBreakables(bomb);
+            checkCollisionWithPlayer(bomb);
+            if (bomb.isDead())
+            {
                 bombs.removeIndex(i);
+                player.increaseNumBombs();
+            }
         }
     }
 
-    private void checkCollisonOtherBombs(int i)
+    private void checkCollisionsWithOtherBombs(int currentBombIndex)
     {
-        if (bombs.get(i).isExplode)
-            for (int j = 0; j < bombs.size; j++)
-                if (i != j)
-                    for (int k = 0; k < bombs.get(i).explosion.size; k++)
-                        if (bombs.get(i).explosion.get(k).checkCollsision(bombs.get(j)))
-                            if (!bombs.get(j).isExplode)
-                                bombs.get(j).delayExplode = 0;
+        Bomb currentBomb = bombs.get(currentBombIndex);
+        if (currentBomb.isExplode)
+            for (int otherBombIndex = 0; otherBombIndex < bombs.size; otherBombIndex++)
+                if (currentBombIndex != otherBombIndex)
+                    for (Explosion explosion : currentBomb.explosion)
+                        if (explosion.checkCollsision(bombs.get(otherBombIndex)))
+                        {
+                            Bomb otherBomb = bombs.get(otherBombIndex);
+                            if (!otherBomb.isExplode)
+                                otherBomb.delayExplode = 0;
+                        }
     }
 
-    private void checkCollisionBlockBreakable(int i)
+    private void checkCollisionWithBlockBreakables(Bomb bomb)
     {
-        for (int j = 0; j < bombs.get(i).explosion.size; j++)
-            for (int k = 0; k < map.BlockBreakable.size; k++)
-                if (bombs.get(i).explosion.get(j).checkCollsision(map.BlockBreakable.get(k)))
+        for (Explosion explosion : bomb.explosion)
+            for (Block blockBreakable : map.BlockBreakable)
+                if (explosion.checkCollsision(blockBreakable))
                 {
-                    map.map[map.BlockBreakable.get(k).getIndexY()][map.BlockBreakable.get(k).getIndexX()] = '*';
-                    map.BlockBreakable.removeIndex(k);
+                    map.map[blockBreakable.getIndexY()][blockBreakable.getIndexX()] = '*';
+                    map.BlockBreakable.removeValue(blockBreakable, true);
                 }
+    }
+
+    private void checkCollisionWithPlayer(Bomb bomb)
+    {
+        for (Explosion explosion : bomb.explosion)
+            if (explosion.checkCollsision(player))
+                player.setDead(true);
     }
 
     @Override
     public void dispose()
     {
-        //player.dispose();
+        player.dispose();
+        for (Bomb bomb : bombs)
+            bomb.dispose();
     }
 
 }
