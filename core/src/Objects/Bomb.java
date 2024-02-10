@@ -25,8 +25,9 @@ public class Bomb extends Object
     private final boolean[] directionExplo;
     public boolean isExplode;
     int contEx;
+    public boolean isFromPlayer;
 
-    public Bomb(Array<Texture> sprites, float X, float Y)
+    public Bomb(Array<Texture> sprites, float X, float Y, boolean isFromPlayer)
     {
         super(sprites, X, Y);
         explosion = new Array<>();
@@ -41,6 +42,7 @@ public class Bomb extends Object
         delayExplode = 2f;
         directionExplo = new boolean[4];
         isExplode = false;
+        this.isFromPlayer = isFromPlayer;
     }
 
     @Override

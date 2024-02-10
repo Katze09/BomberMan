@@ -4,6 +4,7 @@
  */
 package Objects.Scene;
 
+import Objects.PowerUps;
 import Objects.GameMethods;
 import States.Loader;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,11 +17,12 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Map implements GameMethods
 {
-
+    
     private Block BlockUnbreakable[];
     public Array<Block> BlockBreakable;
+    public Array<PowerUps> PowerUps;
     public char[][] map;
-
+    
     public Map()
     {
         map = new char[11][15];
@@ -37,7 +39,7 @@ public class Map implements GameMethods
             System.out.println("");
         }
     }
-
+    
     public int canMoveTo(int x, int y)
     {
         x = (int) (x * 0.01f);
@@ -51,29 +53,32 @@ public class Map implements GameMethods
         }
         return -1;
     }
-
+    
     @Override
     public void draw(SpriteBatch batch)
     {
         for (Block BlockUnbreakable : this.BlockUnbreakable)
             BlockUnbreakable.draw(batch);
-        for (int i = 0; i < BlockBreakable.size; i++)
-            BlockBreakable.get(i).draw(batch);
+        for (PowerUps PowerUp : this.PowerUps)
+            PowerUp.draw(batch);
+        for (Block Blockbreakable : this.BlockBreakable)
+            Blockbreakable.draw(batch);
     }
-
+    
     @Override
     public void update(float deltaTime)
     {
     }
-
+    
     @Override
     public void dispose()
     {
     }
-
+    
     private void setBreakableBlocks()
     {
         BlockBreakable = new Array<>();
+        PowerUps = new Array<>();
         Texture blockTexture = Loader.LoadTexture("BlockBreakable");
         int numBlocks = Loader.getRandomNum(60, 80);
         int door = Loader.getRandomNum(0, numBlocks);
@@ -103,25 +108,22 @@ public class Map implements GameMethods
             }
             float X = x * 100;
             float Y = y * 100;
-            boolean havePowerUp = false;
-            if (i == door) 
-            {
-                BlockBreakable.add(new Block(blockTexture, X, Y, 0));
-                havePowerUp = true;
-            } else
+            if (i == door)
+                //BlockBreakable.add(new Block(blockTexture, X, Y, 0));
+                PowerUps.add(new PowerUps(X, Y, 0));
+            else
                 for (int j = 0; j < powerUps.length; j++)
                     if (powerUps[j] == i)
                     {
-                        BlockBreakable.add(new Block(blockTexture, X, Y, Loader.getRandomNum(1, 5)));
-                        havePowerUp = true;
+                        //BlockBreakable.add(new Block(blockTexture, X, Y, Loader.getRandomNum(1, 5)));
+                        PowerUps.add(new PowerUps(X, Y, Loader.getRandomNum(1, 5)));
                         break;
                     }
-            if (!havePowerUp)
-                BlockBreakable.add(new Block(blockTexture, X, Y));
+            BlockBreakable.add(new Block(blockTexture, X, Y));
             map[y][x] = '+';
         }
     }
-
+    
     private void setUnbreakableBlocks()
     {
         BlockUnbreakable = new Block[72];
@@ -170,5 +172,5 @@ public class Map implements GameMethods
             mapY += 2;
         }
     }
-
+    
 }

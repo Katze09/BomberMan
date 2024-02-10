@@ -4,12 +4,14 @@
  */
 package States;
 
+import Objects.PowerUps;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import Objects.*;
+import Objects.Enemies.Enemy;
 import Objects.Scene.*;
 import com.badlogic.gdx.Input;
 
@@ -19,16 +21,18 @@ import com.badlogic.gdx.Input;
  */
 public class GameStates implements GameMethods
 {
-
+    
     private final int screenWidth = Gdx.graphics.getWidth();
     private final int screenHeight = Gdx.graphics.getHeight();
-
+    
     public OrthographicCamera camera;
     private Player player;
     private Array<Bomb> bombs;
     private Array<Texture> spritesBombs;
+    private Array<Texture> spritesEnemy;
+    private Array<Enemy> enemies;
     public static Map map;
-
+    
     public GameStates()
     {
         camera = new OrthographicCamera();
@@ -39,10 +43,14 @@ public class GameStates implements GameMethods
         String[] fileNames = new String[10];
         fileNames[0] = "Bomb";
         spritesBombs = Loader.LoadArraysprites(fileNames, 1);
+        fileNames[0] = "Enemy";
+        spritesEnemy = Loader.LoadArraysprites(fileNames, 1);
         fileNames[0] = "Player";
         player = new Player(Loader.LoadArraysprites(fileNames, 1), 100, 100);
+        enemies = new Array<>();
+        enemies.add(new Enemy(spritesEnemy, 100, 900));
     }
-
+    
     public void keyBoardDown(int keycode)
     {
         player.keyBoardDown(keycode);
@@ -50,36 +58,44 @@ public class GameStates implements GameMethods
         {
             if (player.moveTo > 0)
                 if (player.up || player.down)
-                    bombs.add(new Bomb(spritesBombs, player.getX(), player.moveTo));
+                    bombs.add(new Bomb(spritesBombs, player.getX(), player.moveTo, true));
                 else
-                    bombs.add(new Bomb(spritesBombs, player.moveTo, player.getY()));
+                    bombs.add(new Bomb(spritesBombs, player.moveTo, player.getY(), true));
             else
-                bombs.add(new Bomb(spritesBombs, player.getX(), player.getY()));
+                bombs.add(new Bomb(spritesBombs, player.getX(), player.getY(), true));
             player.reduceNumBombs();
         }
     }
-
+    
     public void keyBoardUp(int keycode)
     {
         player.keyBoardUp(keycode);
     }
-
+    
     @Override
     public void draw(SpriteBatch batch)
     {
         map.draw(batch);
         for (int i = 0; i < bombs.size; i++)
             bombs.get(i).draw(batch);
+        for (int i = 0; i < enemies.size; i++)
+            enemies.get(i).draw(batch);
         if (!player.isDead())
             player.draw(batch);
     }
-
+    
     @Override
     public void update(float deltaTime)
     {
         if (!player.isDead())
             player.update(deltaTime);
-
+        
+        for (int i = 0; i < enemies.size; i++)
+        {
+            enemies.get(i).update(deltaTime);
+            enemies.get(i).createBomb(bombs, spritesBombs);
+        }
+        
         for (int i = 0; i < bombs.size; i++)
         {
             Bomb bomb = bombs.get(i);
@@ -90,11 +106,16 @@ public class GameStates implements GameMethods
             if (bomb.isDead())
             {
                 bombs.removeIndex(i);
-                player.increaseNumBombs();
+                if (bomb.isFromPlayer)
+                    player.increaseNumBombs();
             }
         }
+        
+        for (int i = 0; i < map.PowerUps.size; i++)
+            if (checkCollsionWithPowerUps(map.PowerUps.get(i)))
+                map.PowerUps.removeIndex(i);
     }
-
+    
     private void checkCollisionsWithOtherBombs(int currentBombIndex)
     {
         Bomb currentBomb = bombs.get(currentBombIndex);
@@ -109,7 +130,7 @@ public class GameStates implements GameMethods
                                 otherBomb.delayExplode = 0;
                         }
     }
-
+    
     private void checkCollisionWithBlockBreakables(Bomb bomb)
     {
         for (Explosion explosion : bomb.explosion)
@@ -120,14 +141,24 @@ public class GameStates implements GameMethods
                     map.BlockBreakable.removeValue(blockBreakable, true);
                 }
     }
-
+    
     private void checkCollisionWithPlayer(Bomb bomb)
     {
         for (Explosion explosion : bomb.explosion)
             if (explosion.checkCollsision(player))
                 player.setDead(true);
     }
-
+    
+    private boolean checkCollsionWithPowerUps(PowerUps PowerUp)
+    {
+        if (PowerUp.checkCollsision(player))
+        {
+            PowerUp.aplicateEffect(player);
+            return true;
+        }
+        return false;
+    }
+    
     @Override
     public void dispose()
     {
@@ -135,5 +166,5 @@ public class GameStates implements GameMethods
         for (Bomb bomb : bombs)
             bomb.dispose();
     }
-
+    
 }

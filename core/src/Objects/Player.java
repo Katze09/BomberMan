@@ -44,18 +44,18 @@ public class Player extends Object
         upKleft = downKleft = rightKleft = leftKleft = true;
         float X1HitBox = X + (WIDTH * hitBoxMultiplication);
         float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
-        float Y1HitBox = (Y + 25) - (HEIGHT * hitBoxMultiplication);
-        float Y2HitBox = HEIGHT - 2 * (HEIGHT * hitBoxMultiplication); // Corregido
+        float Y1HitBox = (Y + 25) + (HEIGHT * hitBoxMultiplication);
+        float Y2HitBox = (HEIGHT - 25) - 2 * ((HEIGHT - 25) * hitBoxMultiplication); // Corregido
         hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
         previouslyX = X;
         previouslyY = Y;
     }
-    
+
     public int getNumBombs()
     {
         return numBombs;
     }
-    
+
     public void reduceNumBombs()
     {
         numBombs--;
@@ -65,12 +65,12 @@ public class Player extends Object
     {
         numBombs++;
     }
-    
+
     public boolean canPutBomb()
     {
         return numBombs > 0;
     }
-    
+
     public void keyBoardDown(int keycode)
     {
         if (moveTo <= 0)
@@ -311,7 +311,7 @@ public class Player extends Object
     {
         this.Y = Y;
         vector3Position.y = Y;
-        hitBox.setY((Y + 25) - (HEIGHT * hitBoxMultiplication));
+        hitBox.setY((Y + 25) - ((HEIGHT-25) * hitBoxMultiplication));
     }
 
 }

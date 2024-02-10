@@ -15,22 +15,12 @@ public class Block extends Obstacle
 
     private final int indexX;
     private final int indexY;
-    protected final Object powerUp;
-    
-    public Block(Texture sprite, float X, float Y, int powerUp)
-    {
-        super(sprite, X, Y);
-        this.indexX = (int) (X * 0.01);
-        this.indexY = (int) (Y * 0.01);
-        this.powerUp = null;
-    }
 
     public Block(Texture sprite, float X, float Y)
     {
         super(sprite, X, Y);
         this.indexX = (int) (X * 0.01);
         this.indexY = (int) (Y * 0.01);
-        powerUp = null;
     }
 
     @Override

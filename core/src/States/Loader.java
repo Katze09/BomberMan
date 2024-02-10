@@ -45,6 +45,6 @@ public class Loader
 
     public static int getRandomNum(int i, int j)
     {
-        return new Random().nextInt(i, (j - 1));
+        return new Random().nextInt(i, j);
     }
 }
