@@ -17,12 +17,12 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Map implements GameMethods
 {
-    
+
     private Block BlockUnbreakable[];
     public Array<Block> BlockBreakable;
     public Array<PowerUps> PowerUps;
     public char[][] map;
-    
+
     public Map()
     {
         map = new char[11][15];
@@ -32,14 +32,9 @@ public class Map implements GameMethods
         setUnbreakableBlocks();
         map[1][1] = map[1][2] = map[2][1] = map[9][1] = map[9][2] = map[8][1] = map[1][12] = map[1][13] = map[2][13] = map[9][12] = map[9][13] = map[8][13] = '!';
         setBreakableBlocks();
-        for (int i = 10; i >= 0; i--)
-        {
-            for (int j = 0; j < 15; j++)
-                System.out.print(map[i][j]);
-            System.out.println("");
-        }
+
     }
-    
+
     public int canMoveTo(int x, int y)
     {
         x = (int) (x * 0.01f);
@@ -53,7 +48,76 @@ public class Map implements GameMethods
         }
         return -1;
     }
-    
+
+    public boolean thereBombInLine(int x, int y, boolean direction)
+    {
+        x = (int) (x * 0.01);
+        y = (int) (y * 0.01);
+        if (direction)
+        {
+            for (int i = 1; i < 15; i++)
+                if (map[y][i] == '^')
+                    return true;
+        } else
+            for (int i = 1; i < 11; i++)
+                if (map[i][x] == '^')
+                    return true;
+        return false;
+    }
+
+    public boolean thereBombNear(int x, int y, boolean direction, boolean backOrForward)
+    {
+        x = (int) (x * 0.01);
+        y = (int) (y * 0.01);
+        try
+        {
+            if (direction)
+            {
+                if (backOrForward)
+                {
+                    for (int i = x; i < x + 3; i++)
+                        if (map[y][i] == '^')
+                            return true;
+                } else
+                    for (int i = x; i > x - 3; i--)
+                        if (map[y][i] == '^')
+                            return true;
+            } else if (backOrForward)
+            {
+                for (int i = y; i < y + 3; i++)
+                    if (map[i][x] == '^')
+                        return true;
+            } else
+                for (int i = y; i > y - 3; i--)
+                    if (map[i][x] == '^')
+                        return true;
+        } catch (ArrayIndexOutOfBoundsException ex)
+        {
+            System.err.println("This error is normal and you shouldn't worry: " + ex.getMessage());
+        }
+        return false;
+    }
+
+    public boolean setCharacter(float X, float Y, char character)
+    {
+        int x = (int) (X * 0.01);
+        int y = (int) (Y * 0.01);
+        return setCharacter(x, y, character);
+    }
+
+    public boolean setCharacter(int X, int Y, char character)
+    {
+        try
+        {
+            map[Y][X] = character;
+            return true;
+        } catch (ArrayIndexOutOfBoundsException ex)
+        {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
     @Override
     public void draw(SpriteBatch batch)
     {
@@ -64,17 +128,24 @@ public class Map implements GameMethods
         for (Block Blockbreakable : this.BlockBreakable)
             Blockbreakable.draw(batch);
     }
-    
+
     @Override
     public void update(float deltaTime)
     {
+        for (int i = 10; i >= 0; i--)
+        {
+            for (int j = 0; j < 15; j++)
+                System.out.print(map[i][j]);
+            System.out.println("");
+        }
+        System.out.println("");
     }
-    
+
     @Override
     public void dispose()
     {
     }
-    
+
     private void setBreakableBlocks()
     {
         BlockBreakable = new Array<>();
@@ -123,7 +194,7 @@ public class Map implements GameMethods
             map[y][x] = '+';
         }
     }
-    
+
     private void setUnbreakableBlocks()
     {
         BlockUnbreakable = new Block[72];
@@ -172,5 +243,5 @@ public class Map implements GameMethods
             mapY += 2;
         }
     }
-    
+
 }
