@@ -16,7 +16,7 @@ import java.util.Random;
 public class Loader
 {
 
-    public static Array<Texture> LoadArraysprites(String[] fileName, int cantTextures)
+    public static Array<Texture> LoadArraysprites(String[] fileName, int cantTextures, String folder)
     {
         Array<Texture> sprites = new Array<>();
         int cont = 1;
@@ -24,7 +24,8 @@ public class Loader
         for (int i = 0; i < cantTextures; i++)
             while (textureLoaded)
             {
-                String filePath = fileName[i] + cont + ".png";
+                String filePath = (!folder.equals("")) ? (folder + "/" + fileName[i] + cont + ".png") : 
+                        (fileName[i] + cont + ".png");
                 try
                 {
                     sprites.add(new Texture(filePath));
@@ -38,9 +39,9 @@ public class Loader
         return sprites;
     }
 
-    public static Texture LoadTexture(String fileName)
+    public static Texture LoadTexture(String fileName, String folder)
     {
-        return new Texture(fileName + ".png");
+        return (folder.equals("")) ? new Texture(fileName + ".png") : new Texture(folder + "/" + fileName + ".png");
     }
 
     public static int getRandomNum(int i, int j)

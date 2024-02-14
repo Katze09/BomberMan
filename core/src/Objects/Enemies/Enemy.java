@@ -44,6 +44,12 @@ public class Enemy extends Object
         hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
     }
 
+    @Override
+    public void animationBase()
+    {
+
+    }
+
     protected void moveTo()
     {
         if (!isMoving && Loader.getRandomNum(0, 10) == 5)
@@ -141,23 +147,23 @@ public class Enemy extends Object
         }
     }
 
-    public void createBomb(Array<Bomb> bombs, Array<Texture> spriteBomb)
+    public void createBomb(Array<Bomb> bombs, Array<Texture> spriteBomb, int indexEnemy)
     {
         if (Loader.getRandomNum(0, 150) == 5 && !putBomb)
         {
             if (moveTo > 0)
                 if (direction[0] || direction[1])
                 {
-                    bombs.add(new Bomb(spriteBomb, X, moveTo, false, 2));
+                    bombs.add(new Bomb(spriteBomb, X, moveTo, false, 2, indexEnemy));
                     GameStates.map.setCharacter(X, moveTo, '^');
                 } else
                 {
-                    bombs.add(new Bomb(spriteBomb, moveTo, Y, false, 2));
+                    bombs.add(new Bomb(spriteBomb, moveTo, Y, false, 2, indexEnemy));
                     GameStates.map.setCharacter(moveTo, Y, '^');
                 }
             else
             {
-                bombs.add(new Bomb(spriteBomb, X, Y, false, 2));
+                bombs.add(new Bomb(spriteBomb, X, Y, false, 2, indexEnemy));
                 GameStates.map.setCharacter(X, Y, '^');
             }
             putBomb = true;

@@ -18,7 +18,11 @@ public abstract class Obstacle extends Object
 
     public Obstacle(Texture sprite, float X, float Y)
     {
-        super(new Array<>(new Texture[]{sprite}), X, Y);
+        super(new Array<>(new Texture[]
+        {
+            sprite
+        }), X, Y);
         hitBox = new Rectangle(X, Y, WIDTH, HEIGHT);
     }
+
 }

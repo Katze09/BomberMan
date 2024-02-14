@@ -39,4 +39,9 @@ public class Block extends Obstacle
         return indexY;
     }
 
+    @Override
+    public void animationBase()
+    {
+    }
+
 }

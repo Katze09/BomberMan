@@ -32,22 +32,25 @@ public class GameStates implements GameMethods
     private final Array<Texture> spritesEnemy;
     private Array<Enemy> enemies;
     public static Map map;
+    private final int worldWidth;
+    private final int worldHeight;
 
     public GameStates()
     {
-        map = new Map();
+        map = new Map(31, 13, 120);
         camera = new OrthographicCamera(screenWidth, screenHeight);
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        //new FitViewport(worldWidth, worldHeight, camera);
+        worldWidth = map.Xsize * 100;
+        worldHeight = map.Ysize * 100;
         camera.update();
         bombs = new Array<>();
         String[] fileNames = new String[10];
         fileNames[0] = "Bomb";
-        spritesBombs = Loader.LoadArraysprites(fileNames, 1);
+        spritesBombs = Loader.LoadArraysprites(fileNames, 1, "");
         fileNames[0] = "Enemy";
-        spritesEnemy = Loader.LoadArraysprites(fileNames, 1);
+        spritesEnemy = Loader.LoadArraysprites(fileNames, 1, "");
         fileNames[0] = "Player";
-        player = new Player(Loader.LoadArraysprites(fileNames, 1), 100, 100);
+        player = new Player(Loader.LoadArraysprites(fileNames, 1, "Player"), 100, 100);
         enemies = new Array<>();
         enemies.add(new Enemy(spritesEnemy, 100, 900));
     }
@@ -85,8 +88,8 @@ public class GameStates implements GameMethods
     public void draw(SpriteBatch batch)
     {
         map.draw(batch);
-        for (int i = 0; i < enemies.size; i++)
-            enemies.get(i).draw(batch);
+        for (Enemy enemy : enemies)
+            enemy.draw(batch);
         if (!player.isDead())
             player.draw(batch);
         for (int i = 0; i < bombs.size; i++)
@@ -103,7 +106,7 @@ public class GameStates implements GameMethods
         for (int i = 0; i < enemies.size; i++)
         {
             enemies.get(i).update(deltaTime);
-            enemies.get(i).createBomb(bombs, spritesBombs);
+            enemies.get(i).createBomb(bombs, spritesBombs, i);
         }
 
         for (int i = 0; i < bombs.size; i++)
@@ -113,6 +116,7 @@ public class GameStates implements GameMethods
             checkCollisionsWithOtherBombs(i);
             checkCollisionWithBlockBreakables(bomb);
             checkCollisionWithPlayer(bomb);
+            checkCollisionWithEnemy(bomb);
             if (bomb.isDead())
             {
                 map.setCharacter(bomb.getX(), bomb.getY(), '*');
@@ -120,7 +124,7 @@ public class GameStates implements GameMethods
                 if (bomb.isFromPlayer)
                     player.increaseNumBombs();
                 else
-                    enemies.get(0).putBomb = false;
+                    enemies.get(bomb.getIndexEnemy()).putBomb = false;
             }
         }
 
@@ -135,12 +139,12 @@ public class GameStates implements GameMethods
         float X = player.getX();
 
         // Verifica si la posición actual de la cámara es menor que la posición del jugador
-        if ((camera.position.x + 300) < X && camera.position.x <= 2250)
+        if ((camera.position.x + 300) < X && camera.position.x <= (worldWidth - 750))
             camera.translate((player.getSpeed() * deltaTime), 0);
         if ((camera.position.x - 400) > X && camera.position.x >= 750)
             camera.translate(-1 * (player.getSpeed() * deltaTime), 0);
         camera.position.x = (camera.position.x < 750) ? 750 : camera.position.x;
-        camera.position.x = (camera.position.x > 2250) ? 2250 : camera.position.x;
+        camera.position.x = (camera.position.x > (worldWidth - 750)) ? (worldWidth - 750) : camera.position.x;
         camera.update();
     }
 
@@ -176,6 +180,14 @@ public class GameStates implements GameMethods
         for (Explosion explosion : bomb.explosion)
             if (explosion.checkCollsision(player))
                 player.setDead(true);
+    }
+
+    private void checkCollisionWithEnemy(Bomb bomb)
+    {
+        for (Explosion explosion : bomb.explosion)
+            for (Enemy enemy : enemies)
+                if (explosion.checkCollsision(enemy))
+                    enemies.removeValue(enemy, false);
     }
 
     private boolean checkCollsionWithPowerUps(PowerUps PowerUp)

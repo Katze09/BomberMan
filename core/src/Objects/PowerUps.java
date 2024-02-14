@@ -20,13 +20,14 @@ public class PowerUps extends Object
     private final int type;
     private final int bomb = 1;
     private final int sizeExplosion = 2;
+    private final int increaseSpeed = 3;
     
     public PowerUps(float X, float Y, int type)
     {
         this.type = type;
         setSprites(new Array<>(new Texture[]
         {
-            Loader.LoadTexture("PowerUp" + type)
+            Loader.LoadTexture("PowerUp" + type, "")
         }));
         WIDTH = sprites.get(indexSprites).getWidth();
         HEIGHT = sprites.get(indexSprites).getHeight();
@@ -57,7 +58,17 @@ public class PowerUps extends Object
             case sizeExplosion:
                 player.increaseSizeExplosion();
                 break;
+            case increaseSpeed:
+                player.speed = 800;
+                player.delayPowerUp = 5f;
+                player.sizeBehindBlock = 25;
+                break;
         }
+    }
+
+    @Override
+    public void animationBase()
+    {
     }
 
 }

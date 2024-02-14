@@ -5,6 +5,7 @@
 package Objects;
 
 import States.GameStates;
+import States.Loader;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.input.RemoteSender;
@@ -36,6 +37,9 @@ public class Player extends Object
     public float previouslyY;
     private int numBombs;
     private int sizeExplosion;
+    private float delayAnimationMove;
+    public float delayPowerUp;
+    public int sizeBehindBlock = 10;
 
     public Player(Array<Texture> sprites, float X, float Y)
     {
@@ -44,6 +48,7 @@ public class Player extends Object
         numBombs = 3;
         up = down = right = left = false;
         upKleft = downKleft = rightKleft = leftKleft = true;
+        delayAnimationMove = 0.1f;
         float X1HitBox = X + (WIDTH * hitBoxMultiplication);
         float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
         float Y1HitBox = (Y + 25) + (HEIGHT * hitBoxMultiplication);
@@ -69,7 +74,7 @@ public class Player extends Object
     {
         numBombs++;
     }
-    
+
     public int getSizeExplosion()
     {
         return sizeExplosion;
@@ -79,7 +84,7 @@ public class Player extends Object
     {
         sizeExplosion++;
     }
-    
+
     public int getLife()
     {
         return life;
@@ -95,6 +100,27 @@ public class Player extends Object
         return numBombs > 0;
     }
 
+    private int contNumSpritesAnimation = 0;
+
+    @Override
+    public void animationBase()
+    {
+        if (moveTo != 0)
+        {
+            if (delayAnimationMove <= 0)
+            {
+                indexSprites++;
+                contNumSpritesAnimation++;
+                delayAnimationMove = 0.1f;
+            }
+            if (contNumSpritesAnimation == 4)
+            {
+                contNumSpritesAnimation = 0;
+                indexSprites = indexSprites - 4;
+            }
+        }
+    }
+
     public void keyBoardDown(int keycode)
     {
         if (moveTo <= 0)
@@ -108,6 +134,8 @@ public class Player extends Object
                     if (GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                     {
                         up = true;
+                        indexSprites = 12;
+                        contNumSpritesAnimation = 0;
                         moveTo = Y + 100;
                         upKleft = true;
                     }
@@ -116,6 +144,8 @@ public class Player extends Object
                     if (GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                     {
                         down = true;
+                        indexSprites = 4;
+                        contNumSpritesAnimation = 0;
                         moveTo = Y - 100;
                         downKleft = true;
                     }
@@ -124,6 +154,8 @@ public class Player extends Object
                     if (GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                     {
                         right = true;
+                        indexSprites = 8;
+                        contNumSpritesAnimation = 0;
                         moveTo = X + 100;
                         rightKleft = true;
                     }
@@ -133,6 +165,8 @@ public class Player extends Object
                     {
                         left = true;
                         moveTo = X - 100;
+                        indexSprites = 16;
+                        contNumSpritesAnimation = 0;
                         leftKleft = true;
                     }
                     break;
@@ -188,11 +222,21 @@ public class Player extends Object
             rightEvent(deltaTime);
         if (left)
             leftEvent(deltaTime);
+        if (delayAnimationMove > 0)
+            delayAnimationMove -= deltaTime;
+        if (delayPowerUp > 0)
+            delayPowerUp -= deltaTime;
+        else
+        {
+            speed = 500;
+            sizeBehindBlock = 10;
+        }
+        animationBase();
     }
 
     private void upEvent(float deltaTime)
     {
-        if (Y < moveTo)
+        if (Y < moveTo - sizeBehindBlock)
             setY(Y + (speed * deltaTime));
         else
         {
@@ -204,19 +248,26 @@ public class Player extends Object
                 if (upKleft)
                     upKleft = false;
                 moveTo = 0;
+                indexSprites = 3;
                 if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
                     down = true;
+                    indexSprites = 4;
+                    contNumSpritesAnimation = 0;
                     downKleft = true;
                     moveTo = Y - 100;
                 } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
                     right = true;
+                    indexSprites = 8;
+                    contNumSpritesAnimation = 0;
                     rightKleft = true;
                     moveTo = X + 100;
                 } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
                     left = true;
+                    indexSprites = 16;
+                    contNumSpritesAnimation = 0;
                     leftKleft = true;
                     moveTo = X - 100;
                 }
@@ -227,7 +278,7 @@ public class Player extends Object
 
     private void downEvent(float deltaTime)
     {
-        if (Y > moveTo)
+        if (Y > moveTo + sizeBehindBlock)
             setY(Y - (speed * deltaTime));
         else
         {
@@ -239,19 +290,26 @@ public class Player extends Object
                 if (downKleft)
                     downKleft = false;
                 moveTo = 0;
+                indexSprites = 0;
                 if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
                     up = true;
+                    indexSprites = 12;
+                    contNumSpritesAnimation = 0;
                     upKleft = true;
                     moveTo = Y + 100;
                 } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
                     right = true;
+                    indexSprites = 8;
+                    contNumSpritesAnimation = 0;
                     rightKleft = true;
                     moveTo = X + 100;
                 } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
                     left = true;
+                    indexSprites = 16;
+                    contNumSpritesAnimation = 0;
                     leftKleft = true;
                     moveTo = X - 100;
                 }
@@ -262,7 +320,7 @@ public class Player extends Object
 
     private void rightEvent(float deltaTime)
     {
-        if (X < moveTo)
+        if (X < moveTo - sizeBehindBlock)
             setX(X + (speed * deltaTime));
         else
         {
@@ -273,20 +331,27 @@ public class Player extends Object
             {
                 if (rightKleft)
                     rightKleft = false;
+                indexSprites = 1;
                 moveTo = 0;
                 if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
                     up = true;
+                    indexSprites = 12;
+                    contNumSpritesAnimation = 0;
                     upKleft = true;
                     moveTo = Y + 100;
                 } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
                     down = true;
+                    indexSprites = 4;
+                    contNumSpritesAnimation = 0;
                     downKleft = true;
                     moveTo = Y - 100;
                 } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
                     left = true;
+                    indexSprites = 16;
+                    contNumSpritesAnimation = 0;
                     leftKleft = true;
                     moveTo = X - 100;
                 }
@@ -297,7 +362,7 @@ public class Player extends Object
 
     private void leftEvent(float deltaTime)
     {
-        if (X > moveTo)
+        if (X > moveTo + sizeBehindBlock)
             setX(X - (speed * deltaTime));
         else
         {
@@ -309,19 +374,26 @@ public class Player extends Object
                 if (leftKleft)
                     leftKleft = false;
                 moveTo = 0;
+                indexSprites = 2;
                 if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
                     up = true;
+                    indexSprites = 12;
+                    contNumSpritesAnimation = 0;
                     upKleft = true;
                     moveTo = Y + 100;
                 } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
                     down = true;
+                    indexSprites = 4;
+                    contNumSpritesAnimation = 0;
                     downKleft = true;
                     moveTo = Y - 100;
                 } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
                     right = true;
+                    indexSprites = 8;
+                    contNumSpritesAnimation = 0;
                     rightKleft = true;
                     moveTo = X + 100;
                 }
@@ -335,7 +407,7 @@ public class Player extends Object
     {
         this.Y = Y;
         vector3Position.y = Y;
-        hitBox.setY((Y + 25) - ((HEIGHT-25) * hitBoxMultiplication));
+        hitBox.setY((Y + 25) - ((HEIGHT - 25) * hitBoxMultiplication));
     }
 
 }

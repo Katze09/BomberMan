@@ -27,27 +27,8 @@ public class Bomb extends Object
     private int contEx;
     private int multiplicacionSize;
     public boolean isFromPlayer;
+    private final int indexEnemy;
     private int sizeExplosion;
-
-    public Bomb(Array<Texture> sprites, float X, float Y, boolean isFromPlayer)
-    {
-        super(sprites, X, Y);
-        explosion = new Array<>();
-        contEx = 0;
-        String[] nameFile = new String[10];
-        nameFile[0] = "ExplosionBase";
-        explosionSpriteBase = Loader.LoadArraysprites(nameFile, 7);
-        nameFile[0] = "ExplosionMid";
-        explosionSpriteMid = Loader.LoadArraysprites(nameFile, 7);
-        nameFile[0] = "ExplosionFinal";
-        explosionSpriteFinal = Loader.LoadArraysprites(nameFile, 7);
-        delayExplode = 2f;
-        directionExplo = new boolean[4];
-        isExplode = false;
-        this.isFromPlayer = isFromPlayer;
-        this.sizeExplosion = 1;
-        multiplicacionSize = 0;
-    }
 
     public Bomb(Array<Texture> sprites, float X, float Y, boolean isFromPlayer, int sizeExplosion)
     {
@@ -56,17 +37,39 @@ public class Bomb extends Object
         contEx = 0;
         String[] nameFile = new String[10];
         nameFile[0] = "ExplosionBase";
-        explosionSpriteBase = Loader.LoadArraysprites(nameFile, 7);
+        explosionSpriteBase = Loader.LoadArraysprites(nameFile, 7, "Explosion");
         nameFile[0] = "ExplosionMid";
-        explosionSpriteMid = Loader.LoadArraysprites(nameFile, 7);
+        explosionSpriteMid = Loader.LoadArraysprites(nameFile, 7, "Explosion");
         nameFile[0] = "ExplosionFinal";
-        explosionSpriteFinal = Loader.LoadArraysprites(nameFile, 7);
+        explosionSpriteFinal = Loader.LoadArraysprites(nameFile, 7, "Explosion");
         delayExplode = 2f;
         directionExplo = new boolean[4];
         isExplode = false;
         this.isFromPlayer = isFromPlayer;
         this.sizeExplosion = sizeExplosion;
         multiplicacionSize = 0;
+        indexEnemy = -1;
+    }
+    
+    public Bomb(Array<Texture> sprites, float X, float Y, boolean isFromPlayer, int sizeExplosion, int indexEnemy)
+    {
+        super(sprites, X, Y);
+        explosion = new Array<>();
+        contEx = 0;
+        String[] nameFile = new String[10];
+        nameFile[0] = "ExplosionBase";
+        explosionSpriteBase = Loader.LoadArraysprites(nameFile, 7, "Explosion");
+        nameFile[0] = "ExplosionMid";
+        explosionSpriteMid = Loader.LoadArraysprites(nameFile, 7, "Explosion");
+        nameFile[0] = "ExplosionFinal";
+        explosionSpriteFinal = Loader.LoadArraysprites(nameFile, 7, "Explosion");
+        delayExplode = 2f;
+        directionExplo = new boolean[4];
+        isExplode = false;
+        this.isFromPlayer = isFromPlayer;
+        this.sizeExplosion = sizeExplosion;
+        multiplicacionSize = 0;
+        this.indexEnemy = indexEnemy;
     }
 
     @Override
@@ -153,6 +156,16 @@ public class Bomb extends Object
     public float getDelayExplode()
     {
         return delayExplode;
+    }
+
+    public int getIndexEnemy()
+    {
+        return indexEnemy;
+    }
+    
+    @Override
+    public void animationBase()
+    {
     }
 
 }

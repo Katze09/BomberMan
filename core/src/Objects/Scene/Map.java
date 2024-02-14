@@ -22,17 +22,21 @@ public class Map implements GameMethods
     public Array<Block> BlockBreakable;
     public Array<PowerUps> PowerUps;
     public char[][] map;
-    public final int Ysize = 13;
-    public final int Xsize = 30;
+    public final int Ysize;
+    public final int Xsize;
+    private final int numBlockBreakable;
 
-    public Map()
+    public Map(int mapX, int mapY, int maxNumBreakableBlocks)
     {
+        Xsize = (mapX % 2 == 0) ? mapX + 1: mapX;
+        Ysize = (mapY % 2 == 0) ? mapY + 1 : mapY;
         map = new char[Ysize][Xsize];
+        numBlockBreakable = maxNumBreakableBlocks;
         for (int i = 0; i < Ysize; i++)
             for (int j = 0; j < Xsize; j++)
                 map[i][j] = '*';
         setUnbreakableBlocks();
-        map[1][1] = map[1][2] = map[2][1] = map[9][1] = map[9][2] = map[8][1] = map[1][12] = map[1][13] = map[2][13] = map[9][12] = map[9][13] = map[8][13] = '!';
+        map[1][1] = map[1][2] = map[2][1] = map[Ysize - 2][1] = map[Ysize - 2][2] = map[Ysize - 3][1] = map[1][Xsize - 3] = map[1][Xsize - 2] = map[2][Xsize - 2] = map[9][Xsize - 2] = map[9][Xsize - 2] = map[8][Xsize - 2] = '!';
         setBreakableBlocks();
 
     }
@@ -85,20 +89,20 @@ public class Map implements GameMethods
             {
                 if (backOrForward)
                 {
-                    for (int i = x; i < x + 3; i++)
+                    for (int i = x; i < x + 4; i++)
                         if (map[y][i] == '^')
                             return true;
                 } else
-                    for (int i = x; i > x - 3; i--)
+                    for (int i = x; i > x - 4; i--)
                         if (map[y][i] == '^')
                             return true;
             } else if (backOrForward)
             {
-                for (int i = y; i < y + 3; i++)
+                for (int i = y; i < y + 4; i++)
                     if (map[i][x] == '^')
                         return true;
             } else
-                for (int i = y; i > y - 3; i--)
+                for (int i = y; i > y - 4; i--)
                     if (map[i][x] == '^')
                         return true;
         } catch (ArrayIndexOutOfBoundsException ex)
@@ -160,10 +164,10 @@ public class Map implements GameMethods
     {
         BlockBreakable = new Array<>();
         PowerUps = new Array<>();
-        Texture blockTexture = Loader.LoadTexture("BlockBreakable");
-        int numBlocks = Loader.getRandomNum(60, 80);
+        Texture blockTexture = Loader.LoadTexture("BlockBreakable" , "");
+        int numBlocks = Loader.getRandomNum(numBlockBreakable - 20, numBlockBreakable);
         int door = Loader.getRandomNum(0, numBlocks);
-        int numPowerUps = Loader.getRandomNum(5, 20);
+        int numPowerUps = Loader.getRandomNum(5, 30);
         int[] powerUps = new int[numPowerUps];
         for (int i = 0; i < numPowerUps; i++)
         {
@@ -210,7 +214,7 @@ public class Map implements GameMethods
         BlockUnbreakable = new Array<>();
         int mapX = 0;
         int mapY = 0;
-        Texture blockTexture = Loader.LoadTexture("BlockUnbreakable");
+        Texture blockTexture = Loader.LoadTexture("BlockUnbreakable", "");
         for (int j = 0; j < ((Xsize - 1) * 100) * 2; j += (Xsize - 1) * 100)
         {
             for (int i = 0; i < (Ysize * 100); i += 100)

@@ -157,6 +157,8 @@ public abstract class Object implements GameMethods
         return hitBox;
     }
 
+    public abstract void animationBase();
+    
     @Override
     public void draw(SpriteBatch batch)
     {

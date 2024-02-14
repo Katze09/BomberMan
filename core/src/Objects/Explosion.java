@@ -66,4 +66,9 @@ public class Explosion extends Object
         }
     }
 
+    @Override
+    public void animationBase()
+    {
+    }
+
 }
