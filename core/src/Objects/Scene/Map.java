@@ -18,16 +18,18 @@ import com.badlogic.gdx.utils.Array;
 public class Map implements GameMethods
 {
 
-    private Block BlockUnbreakable[];
+    private Array<Block> BlockUnbreakable;
     public Array<Block> BlockBreakable;
     public Array<PowerUps> PowerUps;
     public char[][] map;
+    public final int Ysize = 13;
+    public final int Xsize = 30;
 
     public Map()
     {
-        map = new char[11][15];
-        for (int i = 0; i < 11; i++)
-            for (int j = 0; j < 15; j++)
+        map = new char[Ysize][Xsize];
+        for (int i = 0; i < Ysize; i++)
+            for (int j = 0; j < Xsize; j++)
                 map[i][j] = '*';
         setUnbreakableBlocks();
         map[1][1] = map[1][2] = map[2][1] = map[9][1] = map[9][2] = map[8][1] = map[1][12] = map[1][13] = map[2][13] = map[9][12] = map[9][13] = map[8][13] = '!';
@@ -39,12 +41,20 @@ public class Map implements GameMethods
     {
         x = (int) (x * 0.01f);
         y = (int) (y * 0.01f);
-        switch (map[y][x])
+        try
         {
-            case '#':
-                return 0;
-            case '+':
-                return 1;
+            switch (map[y][x])
+            {
+                case '#':
+                    return 0;
+                case '+':
+                case '^':
+                    return 1;
+            }
+        } catch (ArrayIndexOutOfBoundsException ex)
+        {
+            System.err.println("This error is normal and you shouldn't worry: " + ex.getMessage());
+            return 0;
         }
         return -1;
     }
@@ -55,11 +65,11 @@ public class Map implements GameMethods
         y = (int) (y * 0.01);
         if (direction)
         {
-            for (int i = 1; i < 15; i++)
+            for (int i = 1; i < Xsize; i++)
                 if (map[y][i] == '^')
                     return true;
         } else
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < Ysize; i++)
                 if (map[i][x] == '^')
                     return true;
         return false;
@@ -132,9 +142,9 @@ public class Map implements GameMethods
     @Override
     public void update(float deltaTime)
     {
-        for (int i = 10; i >= 0; i--)
+        for (int i = Ysize; i >= 0; i--)
         {
-            for (int j = 0; j < 15; j++)
+            for (int j = 0; j < Xsize; j++)
                 System.out.print(map[i][j]);
             System.out.println("");
         }
@@ -170,12 +180,12 @@ public class Map implements GameMethods
         }
         for (int i = 0; i < numBlocks; i++)
         {
-            int x = Loader.getRandomNum(1, 15);
-            int y = Loader.getRandomNum(1, 11);
+            int x = Loader.getRandomNum(1, Xsize);
+            int y = Loader.getRandomNum(1, Ysize);
             while (map[y][x] == '#' || map[y][x] == '+' || map[y][x] == '!')
             {
-                x = Loader.getRandomNum(1, 15);
-                y = Loader.getRandomNum(1, 11);
+                x = Loader.getRandomNum(1, Xsize);
+                y = Loader.getRandomNum(1, Ysize);
             }
             float X = x * 100;
             float Y = y * 100;
@@ -197,47 +207,43 @@ public class Map implements GameMethods
 
     private void setUnbreakableBlocks()
     {
-        BlockUnbreakable = new Block[72];
+        BlockUnbreakable = new Array<>();
         int mapX = 0;
         int mapY = 0;
         Texture blockTexture = Loader.LoadTexture("BlockUnbreakable");
-        int cont = 0;
-        for (int j = 0; j < 2800; j += 1400)
+        for (int j = 0; j < ((Xsize - 1) * 100) * 2; j += (Xsize - 1) * 100)
         {
-            for (int i = 0; i < 1100; i += 100)
+            for (int i = 0; i < (Ysize * 100); i += 100)
             {
-                BlockUnbreakable[cont] = new Block(blockTexture, j, i);
+                BlockUnbreakable.add(new Block(blockTexture, j, i));
                 map[mapY][mapX] = '#';
                 mapY++;
-                cont++;
             }
             mapY = 0;
-            mapX = 14;
+            mapX = Xsize - 1;
         }
         mapX = 1;
         mapY = 0;
-        for (int j = 0; j < 2000; j += 1000)
+        for (int j = 0; j < ((Ysize - 1) * 100) * 2; j += (Ysize - 1) * 100)
         {
-            for (int i = 100; i < 1400; i += 100)
+            for (int i = 100; i < (Xsize - 1) * 100; i += 100)
             {
-                BlockUnbreakable[cont] = new Block(blockTexture, i, j);
+                BlockUnbreakable.add(new Block(blockTexture, i, j));
                 map[mapY][mapX] = '#';
                 mapX++;
-                cont++;
             }
             mapX = 1;
-            mapY = 10;
+            mapY = Ysize - 1;
         }
         mapX = 2;
         mapY = 2;
-        for (int i = 200; i < 1000; i += 200)
+        for (int i = 200; i < (Ysize - 1) * 100; i += 200)
         {
-            for (int j = 200; j < 1400; j += 200)
+            for (int j = 200; j < (Xsize - 1) * 100; j += 200)
             {
-                BlockUnbreakable[cont] = new Block(blockTexture, j, i);
+                BlockUnbreakable.add(new Block(blockTexture, j, i));
                 map[mapY][mapX] = '#';
                 mapX += 2;
-                cont++;
             }
             mapX = 2;
             mapY += 2;

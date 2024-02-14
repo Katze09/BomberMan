@@ -35,10 +35,11 @@ public class GameStates implements GameMethods
 
     public GameStates()
     {
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, screenWidth, screenHeight);
-        camera.update();
         map = new Map();
+        camera = new OrthographicCamera(screenWidth, screenHeight);
+        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        //new FitViewport(worldWidth, worldHeight, camera);
+        camera.update();
         bombs = new Array<>();
         String[] fileNames = new String[10];
         fileNames[0] = "Bomb";
@@ -59,16 +60,16 @@ public class GameStates implements GameMethods
             if (player.moveTo > 0)
                 if (player.up || player.down)
                 {
-                    bombs.add(new Bomb(spritesBombs, player.getX(), player.moveTo, true));
+                    bombs.add(new Bomb(spritesBombs, player.getX(), player.moveTo, true, player.getSizeExplosion()));
                     map.setCharacter(player.getX(), player.moveTo, '^');
                 } else
                 {
-                    bombs.add(new Bomb(spritesBombs, player.moveTo, player.getY(), true));
+                    bombs.add(new Bomb(spritesBombs, player.moveTo, player.getY(), true, player.getSizeExplosion()));
                     map.setCharacter(player.moveTo, player.getY(), '^');
                 }
             else
             {
-                bombs.add(new Bomb(spritesBombs, player.getX(), player.getY(), true));
+                bombs.add(new Bomb(spritesBombs, player.getX(), player.getY(), true, player.getSizeExplosion()));
                 map.setCharacter(player.getX(), player.getY(), '^');
             }
             player.reduceNumBombs();
@@ -90,6 +91,7 @@ public class GameStates implements GameMethods
             player.draw(batch);
         for (int i = 0; i < bombs.size; i++)
             bombs.get(i).draw(batch);
+        batch.setProjectionMatrix(camera.combined);
     }
 
     @Override
@@ -100,10 +102,10 @@ public class GameStates implements GameMethods
 
         for (int i = 0; i < enemies.size; i++)
         {
-            enemies.get(i).update(deltaTime); 
+            enemies.get(i).update(deltaTime);
             enemies.get(i).createBomb(bombs, spritesBombs);
         }
-        
+
         for (int i = 0; i < bombs.size; i++)
         {
             Bomb bomb = bombs.get(i);
@@ -125,7 +127,21 @@ public class GameStates implements GameMethods
         for (int i = 0; i < map.PowerUps.size; i++)
             if (checkCollsionWithPowerUps(map.PowerUps.get(i)))
                 map.PowerUps.removeIndex(i);
-        //map.update(deltaTime);
+        moveCamera(deltaTime);
+    }
+
+    private void moveCamera(float deltaTime)
+    {
+        float X = player.getX();
+
+        // Verifica si la posición actual de la cámara es menor que la posición del jugador
+        if ((camera.position.x + 300) < X && camera.position.x <= 2250)
+            camera.translate((player.getSpeed() * deltaTime), 0);
+        if ((camera.position.x - 400) > X && camera.position.x >= 750)
+            camera.translate(-1 * (player.getSpeed() * deltaTime), 0);
+        camera.position.x = (camera.position.x < 750) ? 750 : camera.position.x;
+        camera.position.x = (camera.position.x > 2250) ? 2250 : camera.position.x;
+        camera.update();
     }
 
     private void checkCollisionsWithOtherBombs(int currentBombIndex)

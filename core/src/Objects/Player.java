@@ -31,9 +31,11 @@ public class Player extends Object
     private boolean rightNext;
     private boolean leftNext;
     public float moveTo;
+    private int life;
     public float previouslyX;
     public float previouslyY;
     private int numBombs;
+    private int sizeExplosion;
 
     public Player(Array<Texture> sprites, float X, float Y)
     {
@@ -49,6 +51,8 @@ public class Player extends Object
         hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
         previouslyX = X;
         previouslyY = Y;
+        life = 3;
+        sizeExplosion = 1;
     }
 
     public int getNumBombs()
@@ -64,6 +68,26 @@ public class Player extends Object
     public void increaseNumBombs()
     {
         numBombs++;
+    }
+    
+    public int getSizeExplosion()
+    {
+        return sizeExplosion;
+    }
+
+    public void increaseSizeExplosion()
+    {
+        sizeExplosion++;
+    }
+    
+    public int getLife()
+    {
+        return life;
+    }
+
+    public void reduceSizeExplosion()
+    {
+        sizeExplosion--;
     }
 
     public boolean canPutBomb()

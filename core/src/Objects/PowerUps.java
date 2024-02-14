@@ -4,8 +4,6 @@
  */
 package Objects;
 
-import Objects.Player;
-import Objects.Object;
 import States.Loader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,7 +18,9 @@ public class PowerUps extends Object
 {
 
     private final int type;
-
+    private final int bomb = 1;
+    private final int sizeExplosion = 2;
+    
     public PowerUps(float X, float Y, int type)
     {
         this.type = type;
@@ -51,8 +51,11 @@ public class PowerUps extends Object
     {
         switch (type)
         {
-            case 1:
+            case bomb:
                 player.increaseNumBombs();
+                break;
+            case sizeExplosion:
+                player.increaseSizeExplosion();
                 break;
         }
     }

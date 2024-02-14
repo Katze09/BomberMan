@@ -148,16 +148,16 @@ public class Enemy extends Object
             if (moveTo > 0)
                 if (direction[0] || direction[1])
                 {
-                    bombs.add(new Bomb(spriteBomb, X, moveTo, false));
+                    bombs.add(new Bomb(spriteBomb, X, moveTo, false, 2));
                     GameStates.map.setCharacter(X, moveTo, '^');
                 } else
                 {
-                    bombs.add(new Bomb(spriteBomb, moveTo, Y, false));
+                    bombs.add(new Bomb(spriteBomb, moveTo, Y, false, 2));
                     GameStates.map.setCharacter(moveTo, Y, '^');
                 }
             else
             {
-                bombs.add(new Bomb(spriteBomb, X, Y, false));
+                bombs.add(new Bomb(spriteBomb, X, Y, false, 2));
                 GameStates.map.setCharacter(X, Y, '^');
             }
             putBomb = true;
