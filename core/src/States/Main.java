@@ -1,8 +1,10 @@
 package States;
 
+import Menu.Menu;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -12,12 +14,15 @@ public class Main extends ApplicationAdapter implements InputProcessor
 {
 
     private GameStates gameStates;
+    private Menu menu;
     private SpriteBatch batch;
+    public static boolean start = false;
 
     @Override
     public void create()
     {
         gameStates = new GameStates();
+        menu = new Menu();
         batch = new SpriteBatch();
         Gdx.input.setInputProcessor(this);
     }
@@ -26,10 +31,16 @@ public class Main extends ApplicationAdapter implements InputProcessor
     public void render()
     {
         float deltaTime = Gdx.graphics.getDeltaTime();
-        ScreenUtils.clear(165, 165, 165, 1);
+        ScreenUtils.clear(Color.BLACK);
         batch.begin();
-        gameStates.update(deltaTime);
-        gameStates.draw(batch);
+        if(start)
+        {
+            gameStates.update(deltaTime);
+            gameStates.draw(batch);
+        }else
+        {
+            menu.draw(batch);
+        }
         batch.end();
     }
 
@@ -63,9 +74,11 @@ public class Main extends ApplicationAdapter implements InputProcessor
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button)
     {
-//        Vector3 worldCoordinates = new Vector3(screenX, screenY, 0);
-//        gameStates.camera.unproject(worldCoordinates);
-//        gameStates.click(worldCoordinates.x, worldCoordinates.y);
+        Vector3 worldCoordinates = new Vector3(screenX, screenY, 0);
+        menu.camera.unproject(worldCoordinates);
+        if (menu.clickMenu(worldCoordinates.x, worldCoordinates.y)) {
+            start = true;
+        }
         return true;
     }
 
@@ -90,6 +103,9 @@ public class Main extends ApplicationAdapter implements InputProcessor
     @Override
     public boolean mouseMoved(int screenX, int screenY)
     {
+        Vector3 worldCoordinates = new Vector3(screenX, screenY, 0);
+        menu.camera.unproject(worldCoordinates);
+        menu.hover(worldCoordinates.x, worldCoordinates.y);
         return false;
     }
 

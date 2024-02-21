@@ -4,10 +4,12 @@
  */
 package Objects.Scene;
 
+import Objects.Enemies.Enemy;
 import Objects.PowerUps;
 import Objects.GameMethods;
 import States.Loader;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
@@ -21,24 +23,39 @@ public class Map implements GameMethods
     private Array<Block> BlockUnbreakable;
     public Array<Block> BlockBreakable;
     public Array<PowerUps> PowerUps;
+    public Array<Enemy> enemies;
     public char[][] map;
     public final int Ysize;
     public final int Xsize;
     private final int numBlockBreakable;
+    private final int numPowerUp;
+    public final int maxNumBreakableBlocks;
+    public final int maxNumPowerUp;
+    public  final int numEnemies;
+    private Sprite wallpaper;
 
-    public Map(int mapX, int mapY, int maxNumBreakableBlocks)
+    public Map(int mapX, int mapY, int maxNumBreakableBlocks, int maxNumPowerUp, int numEnemies)
     {
+        this.maxNumBreakableBlocks = maxNumBreakableBlocks;
+        this.maxNumPowerUp = maxNumPowerUp;
+        this.numEnemies = numEnemies;
         Xsize = (mapX % 2 == 0) ? mapX + 1: mapX;
         Ysize = (mapY % 2 == 0) ? mapY + 1 : mapY;
         map = new char[Ysize][Xsize];
+        wallpaper = new Sprite(Loader.LoadTexture("wallpaper",""));
+        wallpaper.setSize(Xsize * 100, Ysize * 100);
+        wallpaper.setX(100);
+        wallpaper.setY(0);
         numBlockBreakable = maxNumBreakableBlocks;
+        numPowerUp = maxNumPowerUp;
         for (int i = 0; i < Ysize; i++)
             for (int j = 0; j < Xsize; j++)
                 map[i][j] = '*';
+        enemies = new Array<>();
         setUnbreakableBlocks();
         map[1][1] = map[1][2] = map[2][1] = map[Ysize - 2][1] = map[Ysize - 2][2] = map[Ysize - 3][1] = map[1][Xsize - 3] = map[1][Xsize - 2] = map[2][Xsize - 2] = map[9][Xsize - 2] = map[9][Xsize - 2] = map[8][Xsize - 2] = '!';
         setBreakableBlocks();
-
+        setEnemies(numEnemies);
     }
 
     public int canMoveTo(int x, int y)
@@ -135,6 +152,7 @@ public class Map implements GameMethods
     @Override
     public void draw(SpriteBatch batch)
     {
+        wallpaper.draw(batch);
         for (Block BlockUnbreakable : this.BlockUnbreakable)
             BlockUnbreakable.draw(batch);
         for (PowerUps PowerUp : this.PowerUps)
@@ -167,7 +185,7 @@ public class Map implements GameMethods
         Texture blockTexture = Loader.LoadTexture("BlockBreakable" , "");
         int numBlocks = Loader.getRandomNum(numBlockBreakable - 20, numBlockBreakable);
         int door = Loader.getRandomNum(0, numBlocks);
-        int numPowerUps = Loader.getRandomNum(5, 30);
+        int numPowerUps = Loader.getRandomNum(numPowerUp - 10, numPowerUp);
         int[] powerUps = new int[numPowerUps];
         for (int i = 0; i < numPowerUps; i++)
         {
@@ -252,6 +270,41 @@ public class Map implements GameMethods
             mapX = 2;
             mapY += 2;
         }
+    }
+
+    private void setEnemies(int numEnemies)
+    {
+        String[] fileNames = new String[]{"Enemy"};
+        Array<Texture> spritesEnemy = Loader.LoadArraysprites(fileNames, 1, "");
+        int[] X = new int[numEnemies];
+        int[] Y = new int[numEnemies];
+        for (int i = 0; i < numEnemies; i++)
+            Y[i] = X[i] = -1;
+        for (int i = 0;i < numEnemies;i++)
+        {
+            int x = Loader.getRandomNum(1,Xsize);
+            int y = Loader.getRandomNum(1, Ysize-1);
+            while ( map[y][x] == '#' &&  map[y][x] == '+' && !isInArray(X,Y,x,y) && map[y][x] == '!')
+            {
+                x = Loader.getRandomNum(1,Xsize);
+                y = Loader.getRandomNum(1, Ysize-1);
+            }
+            enemies.add(new Enemy(spritesEnemy, x * 100, y * 100));
+            System.out.println("X " + x + " Y " + y);
+            X[i] = x;
+            Y[i] = y;
+        }
+    }
+
+    private boolean isInArray(int[] X, int[] Y, int x, int y)
+    {
+        for (int j : X)
+            if (j == x)
+                return true;
+        for (int j : Y)
+            if (j == y)
+                return true;
+        return  false;
     }
 
 }

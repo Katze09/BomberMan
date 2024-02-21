@@ -24,7 +24,7 @@ public class Enemy extends Object
     protected boolean[] direction;
     protected float moveTo;
     public boolean putBomb;
-    protected int runAwayBomb[][];
+    protected int[][] runAwayBomb;
 
     public Enemy(Array<Texture> sprites, float X, float Y)
     {
@@ -66,32 +66,32 @@ public class Enemy extends Object
                 switch (direcion)
                 {
                     case 0:
-                        if ((map.canMoveTo((int) X, (int) (Y + 100)) == -1 && !map.thereBombInLine((int) X, (int) (Y + 100), true)
-                                && !map.thereBombNear((int) X, (int) (Y + 100), false, true))/* || map.thereBombNear((int) X, (int) (Y + 100), false, false)*/)
+                        if ((map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + 100)) == -1 && !map.get(GameStates.indexMap).thereBombInLine((int) X, (int) (Y + 100), true)
+                                && !map.get(GameStates.indexMap).thereBombNear((int) X, (int) (Y + 100), false, true))/* || map.thereBombNear((int) X, (int) (Y + 100), false, false)*/)
                         {
                             move = isMoving = this.direction[0] = true;
                             moveTo = Y + 100;
                         }
                         break;
                     case 1:
-                        if ((map.canMoveTo((int) X, (int) (Y - 100)) == -1 && !map.thereBombInLine((int) X, (int) (Y - 100), true)
-                                && !map.thereBombNear((int) X, (int) (Y - 100), false, false))/* || map.thereBombNear((int) X, (int) (Y - 100), false, true)*/)
+                        if ((map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - 100)) == -1 && !map.get(GameStates.indexMap).thereBombInLine((int) X, (int) (Y - 100), true)
+                                && !map.get(GameStates.indexMap).thereBombNear((int) X, (int) (Y - 100), false, false))/* || map.thereBombNear((int) X, (int) (Y - 100), false, true)*/)
                         {
                             move = isMoving = this.direction[1] = true;
                             moveTo = Y - 100;
                         }
                         break;
                     case 2:
-                        if ((map.canMoveTo((int) (X + 100), (int) Y) == -1 && !map.thereBombInLine((int) (X + 100), (int) Y, false)
-                                && !map.thereBombNear((int) (X + 100), (int) (Y), true, true))/* || map.thereBombNear((int) (X + 100), (int) (Y), true, false)*/)
+                        if ((map.get(GameStates.indexMap).canMoveTo((int) (X + 100), (int) Y) == -1 && !map.get(GameStates.indexMap).thereBombInLine((int) (X + 100), (int) Y, false)
+                                && !map.get(GameStates.indexMap).thereBombNear((int) (X + 100), (int) (Y), true, true))/* || map.thereBombNear((int) (X + 100), (int) (Y), true, false)*/)
                         {
                             move = isMoving = this.direction[2] = true;
                             moveTo = X + 100;
                         }
                         break;
                     case 3:
-                        if ((map.canMoveTo((int) (X - 100), (int) Y) == -1 && !map.thereBombInLine((int) (X - 100), (int) Y, false)
-                                && !map.thereBombNear((int) (X - 100), (int) (Y), true, false))/* || map.thereBombNear((int) (X - 100), (int) (Y), true, true)*/)
+                        if ((map.get(GameStates.indexMap).canMoveTo((int) (X - 100), (int) Y) == -1 && !map.get(GameStates.indexMap).thereBombInLine((int) (X - 100), (int) Y, false)
+                                && !map.get(GameStates.indexMap).thereBombNear((int) (X - 100), (int) (Y), true, false))/* || map.thereBombNear((int) (X - 100), (int) (Y), true, true)*/)
                         {
                             move = isMoving = this.direction[3] = true;
                             moveTo = X - 100;
@@ -155,16 +155,16 @@ public class Enemy extends Object
                 if (direction[0] || direction[1])
                 {
                     bombs.add(new Bomb(spriteBomb, X, moveTo, false, 2, indexEnemy));
-                    GameStates.map.setCharacter(X, moveTo, '^');
+                    GameStates.map.get(GameStates.indexMap).setCharacter(X, moveTo, '^');
                 } else
                 {
                     bombs.add(new Bomb(spriteBomb, moveTo, Y, false, 2, indexEnemy));
-                    GameStates.map.setCharacter(moveTo, Y, '^');
+                    GameStates.map.get(GameStates.indexMap).setCharacter(moveTo, Y, '^');
                 }
             else
             {
                 bombs.add(new Bomb(spriteBomb, X, Y, false, 2, indexEnemy));
-                GameStates.map.setCharacter(X, Y, '^');
+                GameStates.map.get(GameStates.indexMap).setCharacter(X, Y, '^');
             }
             putBomb = true;
 

@@ -90,23 +90,35 @@ public class Bomb extends Object
                 case 1:
                     if (multiplicacionSize == 100)
                     {
-                        if (directionExplo[0] = GameStates.map.canMoveTo((int) (X - multiplicacionSize), (int) Y) != 0)
+                        int canMove = GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - multiplicacionSize), (int) Y);
+                        if (directionExplo[0] = canMove != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X - multiplicacionSize, Y));
-                        if (directionExplo[1] = GameStates.map.canMoveTo((int) (X + multiplicacionSize), (int) Y) != 0)
+                        if (canMove == 1)
+                            directionExplo[0] = false;
+                        canMove = GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + multiplicacionSize), (int) Y);
+                        if (directionExplo[1] = canMove != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X + multiplicacionSize, Y));
-                        if (directionExplo[2] = GameStates.map.canMoveTo((int) X, (int) (Y + multiplicacionSize)) != 0)
+                        if (canMove == 1)
+                            directionExplo[1] = false;
+                        canMove = GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + multiplicacionSize));
+                        if (directionExplo[2] = canMove != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X, (Y + multiplicacionSize), 90));
-                        if (directionExplo[3] = GameStates.map.canMoveTo((int) X, (int) (Y - multiplicacionSize)) != 0)
+                        if (canMove == 1)
+                            directionExplo[2] = false;
+                        canMove = GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - multiplicacionSize));
+                        if (directionExplo[3] = canMove != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X, (Y - multiplicacionSize), 90));
+                        if (canMove == 1)
+                            directionExplo[3] = false;
                     } else
                     {
-                        if (directionExplo[0] && GameStates.map.canMoveTo((int) (X - multiplicacionSize), (int) Y) != 0)
+                        if (directionExplo[0] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - multiplicacionSize), (int) Y) != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X - multiplicacionSize, Y, 180));
-                        if (directionExplo[1] && GameStates.map.canMoveTo((int) (X + multiplicacionSize), (int) Y) != 0)
+                        if (directionExplo[1] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + multiplicacionSize), (int) Y) != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X + multiplicacionSize, Y));
-                        if (directionExplo[2] && GameStates.map.canMoveTo((int) X, (int) (Y + multiplicacionSize)) != 0)
+                        if (directionExplo[2] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + multiplicacionSize)) != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X, (Y + multiplicacionSize), 90));
-                        if (directionExplo[3] && GameStates.map.canMoveTo((int) X, (int) (Y - multiplicacionSize)) != 0)
+                        if (directionExplo[3] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - multiplicacionSize)) != 0)
                             explosion.add(new Explosion(explosionSpriteMid, X, (Y - multiplicacionSize), -90));
                     }
                     delayExplode = 0.01f;
@@ -118,13 +130,13 @@ public class Bomb extends Object
                     }
                     break;
                 case 2:
-                    if (directionExplo[0] && GameStates.map.canMoveTo((int) (X - multiplicacionSize), (int) Y) != 0)
+                    if (directionExplo[0] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - multiplicacionSize), (int) Y) != 0)
                         explosion.add(new Explosion(explosionSpriteFinal, X - multiplicacionSize, Y, 180));
-                    if (directionExplo[1] && GameStates.map.canMoveTo((int) (X + multiplicacionSize), (int) Y) != 0)
+                    if (directionExplo[1] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + multiplicacionSize), (int) Y) != 0)
                         explosion.add(new Explosion(explosionSpriteFinal, X + multiplicacionSize, Y));
-                    if (directionExplo[2] && GameStates.map.canMoveTo((int) X, (int) (Y + multiplicacionSize)) != 0)
+                    if (directionExplo[2] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + multiplicacionSize)) != 0)
                         explosion.add(new Explosion(explosionSpriteFinal, X, (Y + multiplicacionSize), 90));
-                    if (directionExplo[3] && GameStates.map.canMoveTo((int) X, (int) (Y - multiplicacionSize)) != 0)
+                    if (directionExplo[3] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - multiplicacionSize)) != 0)
                         explosion.add(new Explosion(explosionSpriteFinal, X, (Y - multiplicacionSize), -90));
                     delayExplode = 0.5f;
                     break;

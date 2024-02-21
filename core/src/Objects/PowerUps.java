@@ -4,6 +4,7 @@
  */
 package Objects;
 
+import States.GameStates;
 import States.Loader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -18,6 +19,7 @@ public class PowerUps extends Object
 {
 
     private final int type;
+    private final int passLevel = 0;
     private final int bomb = 1;
     private final int sizeExplosion = 2;
     private final int increaseSpeed = 3;
@@ -52,6 +54,10 @@ public class PowerUps extends Object
     {
         switch (type)
         {
+            case passLevel:
+                GameStates.passLevel = true;
+                GameStates.delayPassLevel = 5f;
+                break;
             case bomb:
                 player.increaseNumBombs();
                 break;

@@ -19,18 +19,9 @@ import com.badlogic.gdx.utils.Array;
 public class Player extends Object
 {
 
-    public boolean up;
-    public boolean down;
-    public boolean right;
-    public boolean left;
-    private boolean upKleft;
-    private boolean downKleft;
-    private boolean rightKleft;
-    private boolean leftKleft;
-    private boolean upNext;
-    private boolean downNext;
-    private boolean rightNext;
-    private boolean leftNext;
+    public boolean[] direction;
+    public boolean[] directionLeft;
+    private boolean[] directionNext;
     public float moveTo;
     private int life;
     public float previouslyX;
@@ -46,9 +37,10 @@ public class Player extends Object
         super(sprites, X, Y);
         speed = 500;
         numBombs = 3;
-        up = down = right = left = false;
-        upKleft = downKleft = rightKleft = leftKleft = true;
         delayAnimationMove = 0.1f;
+        direction = new boolean[]{false, false, false,false};
+        directionLeft = new boolean[]{true,true,true,true};
+        directionNext = new boolean[4];
         float X1HitBox = X + (WIDTH * hitBoxMultiplication);
         float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
         float Y1HitBox = (Y + 25) + (HEIGHT * hitBoxMultiplication);
@@ -60,6 +52,26 @@ public class Player extends Object
         sizeExplosion = 1;
     }
 
+
+    public Player(Array<Texture> sprites, float X, float Y, int life)
+    {
+        super(sprites, X, Y);
+        speed = 500;
+        numBombs = 3;
+        delayAnimationMove = 0.1f;
+        direction = new boolean[]{false, false, false,false};
+        directionLeft = new boolean[]{true,true,true,true};
+        directionNext = new boolean[4];
+        float X1HitBox = X + (WIDTH * hitBoxMultiplication);
+        float X2HitBox = WIDTH - 2 * (WIDTH * hitBoxMultiplication); // Corregido
+        float Y1HitBox = (Y + 25) + (HEIGHT * hitBoxMultiplication);
+        float Y2HitBox = (HEIGHT - 25) - 2 * ((HEIGHT - 25) * hitBoxMultiplication); // Corregido
+        hitBox = new Rectangle(X1HitBox, Y1HitBox, X2HitBox, Y2HitBox);
+        previouslyX = X;
+        previouslyY = Y;
+        this.life = life;
+        sizeExplosion = 1;
+    }
     public int getNumBombs()
     {
         return numBombs;
@@ -94,6 +106,11 @@ public class Player extends Object
     {
         sizeExplosion--;
     }
+    
+    public void reduceLife()
+    {
+        life--;
+    }
 
     public boolean canPutBomb()
     {
@@ -125,68 +142,72 @@ public class Player extends Object
     {
         if (moveTo <= 0)
         {
-            up = down = right = left = false;
-            upNext = downNext = rightNext = leftNext = false;
-            upKleft = downKleft = rightKleft = leftKleft = true;
+            direction = new boolean[]{false,false,false,false};
+            directionNext = new boolean[]{false,false,false,false};
+            directionLeft = new boolean[]{true,true,true,true};
+            //up = down = right = left = false;
+            //upNext = downNext = rightNext = leftNext = false;
+            //upKleft = downKleft = rightKleft = leftKleft = true;
             switch (keycode)
             {
                 case Input.Keys.W:
-                    if (GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
+                    if (GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + 100)) == -1)
                     {
-                        up = true;
+                        direction[0] = true;
                         indexSprites = 12;
                         contNumSpritesAnimation = 0;
                         moveTo = Y + 100;
-                        upKleft = true;
+                        directionLeft[0] = true;
                     }
                     break;
                 case Input.Keys.S:
-                    if (GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
+                    if (GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - 100)) == -1)
                     {
-                        down = true;
+                        direction[1] = true;
                         indexSprites = 4;
                         contNumSpritesAnimation = 0;
                         moveTo = Y - 100;
-                        downKleft = true;
+                        directionLeft[1] = true;
                     }
                     break;
                 case Input.Keys.D:
-                    if (GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
+                    if (GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + 100), (int) Y) == -1)
                     {
-                        right = true;
+                        direction[2] = true;
                         indexSprites = 8;
                         contNumSpritesAnimation = 0;
                         moveTo = X + 100;
-                        rightKleft = true;
+                        directionLeft[2] = true;
                     }
                     break;
                 case Input.Keys.A:
-                    if (GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
+                    if (GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - 100), (int) Y) == -1)
                     {
-                        left = true;
+                        direction[3] = true;
                         moveTo = X - 100;
                         indexSprites = 16;
                         contNumSpritesAnimation = 0;
-                        leftKleft = true;
+                        directionLeft[3] = true;
                     }
                     break;
             }
         } else
         {
-            upNext = downNext = rightNext = leftNext = false;
+            directionNext = new boolean[]{false,false,false,false};
+            //upNext = downNext = rightNext = leftNext = false;
             switch (keycode)
             {
                 case Input.Keys.W:
-                    upNext = true;
+                    directionNext[0] = true;
                     break;
                 case Input.Keys.S:
-                    downNext = true;
+                    directionNext[1] = true;
                     break;
                 case Input.Keys.D:
-                    rightNext = true;
+                    directionNext[2] = true;
                     break;
                 case Input.Keys.A:
-                    leftNext = true;
+                    directionNext[3] = true;
                     break;
             }
         }
@@ -197,16 +218,16 @@ public class Player extends Object
         switch (keycode)
         {
             case Input.Keys.W:
-                upKleft = false;
+                directionLeft[0] = false;
                 break;
             case Input.Keys.S:
-                downKleft = false;
+                directionLeft[1] = false;
                 break;
             case Input.Keys.D:
-                rightKleft = false;
+                directionLeft[2] = false;
                 break;
             case Input.Keys.A:
-                leftKleft = false;
+                directionLeft[3] = false;
                 break;
         }
     }
@@ -214,13 +235,13 @@ public class Player extends Object
     @Override
     public void update(float deltaTime)
     {
-        if (up)
+        if (direction[0])
             upEvent(deltaTime);
-        if (down)
+        if (direction[1])
             downEvent(deltaTime);
-        if (right)
+        if (direction[2])
             rightEvent(deltaTime);
-        if (left)
+        if (direction[3])
             leftEvent(deltaTime);
         if (delayAnimationMove > 0)
             delayAnimationMove -= deltaTime;
@@ -241,38 +262,38 @@ public class Player extends Object
         else
         {
             setY(moveTo);
-            if (upKleft && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
+            if (directionLeft[0] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + 100)) == -1)
                 moveTo = Y + 100;
             else
             {
-                if (upKleft)
-                    upKleft = false;
+                if (directionLeft[0])
+                    directionLeft[0] = false;
                 moveTo = 0;
                 indexSprites = 3;
-                if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
+                if (directionNext[1] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
-                    down = true;
+                    direction[1] = true;
                     indexSprites = 4;
                     contNumSpritesAnimation = 0;
-                    downKleft = true;
+                    directionLeft[1] = true;
                     moveTo = Y - 100;
-                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
+                } else if (directionNext[2] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
-                    right = true;
+                    direction[2] = true;
                     indexSprites = 8;
                     contNumSpritesAnimation = 0;
-                    rightKleft = true;
+                    directionLeft[2] = true;
                     moveTo = X + 100;
-                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
+                } else if (directionNext[3] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
-                    left = true;
+                    direction[3] = true;
                     indexSprites = 16;
                     contNumSpritesAnimation = 0;
-                    leftKleft = true;
+                    directionLeft[3] = true;
                     moveTo = X - 100;
                 }
             }
-            up = upKleft;
+            direction[0] = directionLeft[0];
         }
     }
 
@@ -283,38 +304,38 @@ public class Player extends Object
         else
         {
             setY(moveTo);
-            if (downKleft && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
+            if (directionLeft[1] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - 100)) == -1)
                 moveTo = Y - 100;
             else
             {
-                if (downKleft)
-                    downKleft = false;
+                if (directionLeft[1])
+                    directionLeft[1] = false;
                 moveTo = 0;
                 indexSprites = 0;
-                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
+                if (directionNext[0] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
-                    up = true;
+                    direction[0] = true;
                     indexSprites = 12;
                     contNumSpritesAnimation = 0;
-                    upKleft = true;
+                    directionLeft[0] = true;
                     moveTo = Y + 100;
-                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
+                } else if (directionNext[2] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
-                    right = true;
+                    direction[2] = true;
                     indexSprites = 8;
                     contNumSpritesAnimation = 0;
-                    rightKleft = true;
+                    directionLeft[2] = true;
                     moveTo = X + 100;
-                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
+                } else if (directionNext[3] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
-                    left = true;
+                    direction[3] = true;
                     indexSprites = 16;
                     contNumSpritesAnimation = 0;
-                    leftKleft = true;
+                    directionLeft[3] = true;
                     moveTo = X - 100;
                 }
             }
-            down = downKleft;
+            direction[1] = directionLeft[1];
         }
     }
 
@@ -325,38 +346,38 @@ public class Player extends Object
         else
         {
             setX(moveTo);
-            if (rightKleft && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
+            if (directionLeft[2] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + 100), (int) Y) == -1)
                 moveTo = X + 100;
             else
             {
-                if (rightKleft)
-                    rightKleft = false;
+                if (directionLeft[2])
+                    directionLeft[2] = false;
                 indexSprites = 1;
                 moveTo = 0;
-                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
+                if (directionNext[0] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
-                    up = true;
+                    direction[0] = true;
                     indexSprites = 12;
                     contNumSpritesAnimation = 0;
-                    upKleft = true;
+                    directionLeft[0] = true;
                     moveTo = Y + 100;
-                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
+                } else if (directionNext[1] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
-                    down = true;
+                    direction[1] = true;
                     indexSprites = 4;
                     contNumSpritesAnimation = 0;
-                    downKleft = true;
+                    directionLeft[1] = true;
                     moveTo = Y - 100;
-                } else if (leftNext && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
+                } else if (directionNext[3] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - 100), (int) Y) == -1)
                 {
-                    left = true;
+                    direction[3] = true;
                     indexSprites = 16;
                     contNumSpritesAnimation = 0;
-                    leftKleft = true;
+                    directionLeft[3] = true;
                     moveTo = X - 100;
                 }
             }
-            right = rightKleft;
+            direction[2] = directionLeft[2];
         }
     }
 
@@ -367,38 +388,38 @@ public class Player extends Object
         else
         {
             setX(moveTo);
-            if (leftKleft && GameStates.map.canMoveTo((int) (X - 100), (int) Y) == -1)
+            if (directionLeft[3] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X - 100), (int) Y) == -1)
                 moveTo = X - 100;
             else
             {
-                if (leftKleft)
-                    leftKleft = false;
+                if (directionLeft[3])
+                    directionLeft[3] = false;
                 moveTo = 0;
                 indexSprites = 2;
-                if (upNext && GameStates.map.canMoveTo((int) X, (int) (Y + 100)) == -1)
+                if (directionNext[0] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y + 100)) == -1)
                 {
-                    up = true;
+                    direction[0] = true;
                     indexSprites = 12;
                     contNumSpritesAnimation = 0;
-                    upKleft = true;
+                    directionLeft[0] = true;
                     moveTo = Y + 100;
-                } else if (downNext && GameStates.map.canMoveTo((int) X, (int) (Y - 100)) == -1)
+                } else if (directionNext[1] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) X, (int) (Y - 100)) == -1)
                 {
-                    down = true;
+                    direction[1] = true;
                     indexSprites = 4;
                     contNumSpritesAnimation = 0;
-                    downKleft = true;
+                    directionLeft[1] = true;
                     moveTo = Y - 100;
-                } else if (rightNext && GameStates.map.canMoveTo((int) (X + 100), (int) Y) == -1)
+                } else if (directionNext[2] && GameStates.map.get(GameStates.indexMap).canMoveTo((int) (X + 100), (int) Y) == -1)
                 {
-                    right = true;
+                    direction[2] = true;
                     indexSprites = 8;
                     contNumSpritesAnimation = 0;
-                    rightKleft = true;
+                    directionLeft[2] = true;
                     moveTo = X + 100;
                 }
             }
-            left = leftKleft;
+            direction[3] = directionLeft[3];
         }
     }
 

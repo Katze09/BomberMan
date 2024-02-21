@@ -15,12 +15,14 @@ public class Block extends Obstacle
 
     private final int indexX;
     private final int indexY;
+    private final int score;
 
     public Block(Texture sprite, float X, float Y)
     {
         super(sprite, X, Y);
         this.indexX = (int) (X * 0.01);
         this.indexY = (int) (Y * 0.01);
+        score = 5;
     }
 
     @Override
@@ -37,6 +39,11 @@ public class Block extends Obstacle
     public int getIndexY()
     {
         return indexY;
+    }
+    
+    public int getScore()
+    {
+        return score;
     }
 
     @Override
